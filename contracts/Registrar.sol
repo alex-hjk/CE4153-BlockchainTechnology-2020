@@ -12,7 +12,9 @@ contract Registrar {
 
     // Commit domain to registrar after claimed bid
     function addDomain(string memory _name, address _owner, uint _expiry ) private {
-        domains[_name].push(Domain(_owner, _expiry));
+        Domain storage d = domains[_name];
+        d.domainOwner = _owner;
+        d.domainExpiry = _expiry;
     }
 
     // Remove domain from registrar
