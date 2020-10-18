@@ -40,8 +40,15 @@ contract Registrar {
         
         // Expiry blocktime for bids to be revealed
         uint revealExpiry;
-
+        
+        // Check if bidding is active
         bool active;
+        
+        // Store highest bid during reveal phase
+        uint highestBid;
+        
+        // Store address of highest bidder during reveal phase
+        address highestBidder;
     }
     
     // Map domain name to Bidding info
@@ -95,5 +102,22 @@ contract Registrar {
         
         // Assign hashed commit to address in bid info mapping
         b.commits[msg.sender] = _commit;
+    }
+    
+    // ******** Reveal phase ********
+    
+    function revealBid(string memory _name, uint _value, string memory _salt) public biddingActive(_name) revealPhase(_name) {
+        
+        // Compute commit hash based on bid value and salt
+        bytes32 commitCalc = keccak256(abi.encode(_value, _salt));
+        
+        // Require calculated hash to match previously committed hash
+        require(bids[_name].commits[msg.sender] == commitCalc);
+        
+        // Check if bid value is highest bid and set if true
+        Bidding storage b = bids[_name];
+        if (b.highestBid < _value) {
+            b.highestBidder = msg.sender;
+        }
     }
 }
