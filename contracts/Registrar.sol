@@ -23,5 +23,24 @@ contract Registrar {
         delete domains[_name];
     }
     
-    // ******** Bidding functionality ******** 
+    // ******** Bidding functionality ********
+    // Bid and reveal phase lengths, counted in block numbers
+    uint constant bidLength = 3;
+    uint constant revealLength = 3;
+    
+    // New Bidding info struct will be created for each new domain name bid initiated
+    struct Bidding {
+        
+        // Mapping of sender address to corresponding bid commit hash
+        mapping (address => bytes32) commits;
+        
+        // Expiry blocktime for bids to be added
+        uint bidExpiry;
+        
+        // Expiry blocktime for bids to be revealed
+        uint revealExpiry;
+    }
+    
+    // Map domain name to Bidding info
+    mapping (string => Bidding) public bids;
 }
