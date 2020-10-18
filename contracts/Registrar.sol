@@ -11,14 +11,14 @@ contract Registrar {
     mapping (string => Domain) public domains;
 
     // Commit domain to registrar after claimed bid
-    function addDomain(string memory _name, address _owner, uint _expiry ) private {
+    function addDomain(string memory _name, address _owner, uint _expiry ) public {
         Domain storage d = domains[_name];
         d.domainOwner = _owner;
         d.domainExpiry = _expiry;
     }
 
     // Remove domain from registrar
-    function removeDomain(string memory _name) private {
+    function removeDomain(string memory _name) public {
         delete domains[_name];
     }
 }
