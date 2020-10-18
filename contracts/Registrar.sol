@@ -24,13 +24,14 @@ contract Registrar {
     }
     
     // ******** Bidding functionality ********
+
     // Bid and reveal phase lengths, counted in block numbers
     uint constant bidLength = 3;
     uint constant revealLength = 3;
     
     // New Bidding info struct will be created for each new domain name bid initiated
     struct Bidding {
-        
+
         // Mapping of sender address to corresponding bid commit hash
         mapping (address => bytes32) commits;
         
@@ -39,18 +40,38 @@ contract Registrar {
         
         // Expiry blocktime for bids to be revealed
         uint revealExpiry;
+
+        bool active;
     }
     
     // Map domain name to Bidding info
     mapping (string => Bidding) public bids;
 
     // ******** Commit phase ********
-    function startBid (string memory _name, bytes32 _commit) public {
+
+    // Check for existing bid
+    modifier biddingActive(string memory _name) {
+        require (bids[_name].active);
+        _;
+    }
+    
+    // Start a new domain name bid
+    function startBid(string memory _name, bytes32 _commit) public {
         Bidding storage b = bids[_name];
         
         // Set bid and reveal expiry times
         b.bidExpiry = block.number + bidLength;
         b.revealExpiry = block.number + bidLength + revealLength;
+        
+        // Assign hashed commit to address in bid info mapping
+        b.commits[msg.sender] = _commit;
+        
+        // Set bid to active
+        b.active = true;
+    }
+    
+    function addBid(string memory _name, bytes32 _commit) public biddingActive(_name) {
+        Bidding storage b = bids[_name];
         
         // Assign hashed commit to address in bid info mapping
         b.commits[msg.sender] = _commit;
