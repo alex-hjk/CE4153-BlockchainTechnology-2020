@@ -43,4 +43,16 @@ contract Registrar {
     
     // Map domain name to Bidding info
     mapping (string => Bidding) public bids;
+
+    // ******** Commit phase ********
+    function startBid (string memory _name, bytes32 _commit) public {
+        Bidding storage b = bids[_name];
+        
+        // Set bid and reveal expiry times
+        b.bidExpiry = block.number + bidLength;
+        b.revealExpiry = block.number + bidLength + revealLength;
+        
+        // Assign hashed commit to address in bid info mapping
+        b.commits[msg.sender] = _commit;
+    }
 }
