@@ -3,6 +3,8 @@ pragma solidity >=0.7.0 <0.8.0;
 
 contract Registrar {
     // ******** Domain storage ********
+    uint constant domainExpiry = 2427456;    // 1 year / 13 seconds (estimated block time)
+    
     struct Domain {
         address domainOwner;
         uint domainExpiry;      // domain expiry block number
@@ -12,10 +14,10 @@ contract Registrar {
     mapping (string => Domain) public domains;
 
     // Commit domain to registrar after claimed bid
-    function addDomain(string memory _name, address _owner, uint _expiry ) public {
+    function addDomain(string memory _name, address _owner) public {
         Domain storage d = domains[_name];
         d.domainOwner = _owner;
-        d.domainExpiry = _expiry;
+        d.domainExpiry = block.number + domainExpiry;
     }
 
     // Remove domain from registrar
@@ -81,6 +83,13 @@ contract Registrar {
         _;
     }
     
+    // Check for block height > reveal expiry > commit expiry
+    modifier claimPhase(string memory _name) {
+        require(block.number > bids[_name].commitExpiry);
+        require(block.number > bids[_name].revealExpiry);
+        _;
+    }
+    
     // Start a new domain name bid
     function startBid(string memory _name, bytes32 _commit) public biddingInactive(_name) {
         Bidding storage b = bids[_name];
@@ -119,5 +128,16 @@ contract Registrar {
         if (b.highestBid < _value) {
             b.highestBidder = msg.sender;
         }
+    }
+    
+    // ******** Claim phase ********
+    
+    function claimDomain(string memory _name) public biddingActive(_name) claimPhase(_name) {
+        
+        // Only allow highest bidder to claim domain
+        require(bids[_name].highestBidder == msg.sender);
+        
+        // Store domain registration info in registrar
+        addDomain(_name, msg.sender);
     }
 }
