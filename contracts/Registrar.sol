@@ -118,7 +118,7 @@ contract Registrar {
     function revealBid(string memory _name, uint _value, string memory _salt) public biddingActive(_name) revealPhase(_name) {
         
         // Compute commit hash based on bid value and salt
-        bytes32 commitCalc = keccak256(abi.encode(_value, _salt));
+        bytes32 commitCalc = generateHash(_value, _salt);
         
         // Require calculated hash to match previously committed hash
         require(bids[_name].commits[msg.sender] == commitCalc);
@@ -139,5 +139,17 @@ contract Registrar {
         
         // Store domain registration info in registrar
         addDomain(_name, msg.sender);
+    }
+    
+    // ******** Helper functions ********
+    
+    // Generates hashed commit, can be called for free externally
+    function generateHash(uint _value, string memory _salt) public pure returns(bytes32) {
+        return keccak256(abi.encode(_value, _salt));
+    }
+    
+    // Returns current block number
+    function currentBlock() public view returns(uint) {
+        return block.number;
     }
 }
