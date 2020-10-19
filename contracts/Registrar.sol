@@ -92,7 +92,13 @@ contract Registrar {
     
     // Start a new domain name bid
     function startBid(string memory _name, bytes32 _commit) public biddingInactive(_name) {
+        Domain storage d = domains[_name];
         Bidding storage b = bids[_name];
+        
+        // Only proceed if empty or expired domain
+        if (d.domainExpiry != 0) {
+            require(block.number > d.domainExpiry);
+        }
         
         // Set bid and reveal expiry times
         b.commitExpiry = block.number + commitLength;
@@ -140,6 +146,10 @@ contract Registrar {
         
         // Store domain registration info in registrar
         addDomain(_name, msg.sender);
+
+        // Set bidding to inactive after claim
+        Bidding storage b = bids[_name];
+        b.active = false;
     }
     
     // ******** Helper functions ********
