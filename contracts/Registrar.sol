@@ -92,7 +92,7 @@ contract Registrar {
     
     // Start a new domain name bid
     function startBid(string memory _name, bytes32 _commit) public biddingInactive(_name) {
-        Domain storage d = domains[_name];
+        Domain memory d = domains[_name];
         Bidding storage b = bids[_name];
         
         // Only proceed if empty or expired domain
