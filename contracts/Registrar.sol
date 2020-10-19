@@ -126,6 +126,7 @@ contract Registrar {
         // Check if bid value is highest bid and set if true
         Bidding storage b = bids[_name];
         if (b.highestBid < _value) {
+            b.highestBid = _value;
             b.highestBidder = msg.sender;
         }
     }
