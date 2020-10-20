@@ -30,6 +30,7 @@ contract Registrar {
     // Bid and reveal phase lengths, counted in block numbers
     uint constant commitLength = 3;
     uint constant revealLength = 3;
+    uint constant claimLength = 3;
     
     // New Bidding info struct will be created for each new domain name bid initiated
     struct Bidding {
@@ -42,6 +43,9 @@ contract Registrar {
         
         // Expiry blocktime for bids to be revealed
         uint revealExpiry;
+
+        // Expiry blocktime for domain of bid to be claimed
+        uint claimExpiry;
         
         // Check if bidding is active
         bool active;
@@ -60,7 +64,9 @@ contract Registrar {
 
     // Check for inactive bid
     modifier biddingInactive(string memory _name) {
-        require(!bids[_name].active);
+        if (bids[_name].active) {
+            require(block.number > bids[_name].claimExpiry);
+        }
         _;
     }
     
@@ -85,8 +91,8 @@ contract Registrar {
     
     // Check for block height > reveal expiry > commit expiry
     modifier claimPhase(string memory _name) {
-        require(block.number > bids[_name].commitExpiry);
         require(block.number > bids[_name].revealExpiry);
+        require(block.number <= bids[_name].claimExpiry);
         _;
     }
     
@@ -103,6 +109,7 @@ contract Registrar {
         // Set bid and reveal expiry times
         b.commitExpiry = block.number + commitLength;
         b.revealExpiry = block.number + commitLength + revealLength;
+        b.claimExpiry = block.number + commitLength + revealLength + claimLength;
         
         // Assign hashed commit to address in bid info mapping
         b.commits[msg.sender] = _commit;
@@ -116,6 +123,7 @@ contract Registrar {
         Bidding storage b = bids[_name];
         
         // Assign hashed commit to address in bid info mapping
+        //TODO: include current bid's commitExpiry in commit hash
         b.commits[msg.sender] = _commit;
     }
     
@@ -124,7 +132,7 @@ contract Registrar {
     function revealBid(string memory _name, uint _value, string memory _salt) public biddingActive(_name) revealPhase(_name) {
         
         // Compute commit hash based on bid value and salt
-        bytes32 commitCalc = generateHash(_value, _salt);
+        bytes32 commitCalc = generateHash(_value, _salt, bids[_name].commitExpiry);
         
         // Require calculated hash to match previously committed hash
         require(bids[_name].commits[msg.sender] == commitCalc);
@@ -155,8 +163,8 @@ contract Registrar {
     // ******** Helper functions ********
     
     // Generates hashed commit, can be called for free externally
-    function generateHash(uint _value, string memory _salt) public pure returns(bytes32) {
-        return keccak256(abi.encode(_value, _salt));
+    function generateHash(uint _value, string memory _salt, uint _commitExpiry) public pure returns(bytes32) {
+        return keccak256(abi.encode(_value, _salt, _commitExpiry));
     }
     
     // Returns current block number
