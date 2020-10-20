@@ -27,7 +27,7 @@ contract Registrar {
     
     // ******** Bidding functionality ********
 
-    // Bid and reveal phase lengths, counted in block numbers
+    // Bid, reveal, claim phase lengths, counted in block numbers
     uint constant commitLength = 3;
     uint constant revealLength = 3;
     uint constant claimLength = 3;
@@ -35,8 +35,8 @@ contract Registrar {
     // New Bidding info struct will be created for each new domain name bid initiated
     struct Bidding {
 
-        // Mapping of sender address to corresponding bid commit hash
-        mapping (address => bytes32) commits;
+        // Map sender address to corresponding commit info
+        mapping (address => Commit) commits;
         
         // Expiry blocktime for bids to be added
         uint commitExpiry;
@@ -55,6 +55,13 @@ contract Registrar {
         
         // Store address of highest bidder during reveal phase
         address highestBidder;
+    }
+    
+    struct Commit {
+        
+        // Store commit hash and block number
+        bytes32 commitHash;
+        uint commitBlock;
     }
     
     // Map domain name to Bidding info
@@ -112,8 +119,9 @@ contract Registrar {
         b.revealExpiry = block.number + commitLength + revealLength;
         b.claimExpiry = block.number + commitLength + revealLength + claimLength;
         
-        // Assign hashed commit to address in bid info mapping
-        b.commits[msg.sender] = _commit;
+        // Assign hashed commit to address in bid info mapping and store block number
+        b.commits[msg.sender].commitHash = _commit;
+        b.commits[msg.sender].commitBlock = block.number;
         
         // Set bid to active
         b.active = true;
@@ -124,22 +132,22 @@ contract Registrar {
         Bidding storage b = bids[_name];
         
         // Assign hashed commit to address in bid info mapping
-        //TODO: include current bid's commitExpiry in commit hash
-        b.commits[msg.sender] = _commit;
+        b.commits[msg.sender].commitHash = _commit;
     }
     
     // ******** Reveal phase ********
     
     function revealBid(string memory _name, uint _value, string memory _salt) public biddingActive(_name) revealPhase(_name) {
+        Bidding storage b = bids[_name];
         
         // Compute commit hash based on bid value and salt
-        bytes32 commitCalc = generateHash(_value, _salt, bids[_name].commitExpiry);
+        bytes32 commitCalc = generateHash(_value, _salt);
         
-        // Require calculated hash to match previously committed hash
-        require(bids[_name].commits[msg.sender] == commitCalc);
+        // Require calculated hash to match previously committed hash within same bidding cycle
+        require(b.commits[msg.sender].commitHash == commitCalc);
+        require(b.commits[msg.sender].commitBlock <= b.commitExpiry);
         
         // Check if bid value is highest bid and set if true
-        Bidding storage b = bids[_name];
         if (b.highestBid < _value) {
             b.highestBid = _value;
             b.highestBidder = msg.sender;
@@ -149,23 +157,23 @@ contract Registrar {
     // ******** Claim phase ********
     
     function claimDomain(string memory _name) public biddingActive(_name) claimPhase(_name) {
+        Bidding storage b = bids[_name];
         
         // Only allow highest bidder to claim domain
-        require(bids[_name].highestBidder == msg.sender);
+        require(b.highestBidder == msg.sender);
         
         // Store domain registration info in registrar
         addDomain(_name, msg.sender);
 
         // Set bidding to inactive after claim
-        Bidding storage b = bids[_name];
         b.active = false;
     }
     
     // ******** Helper functions ********
     
     // Generates hashed commit, can be called for free externally
-    function generateHash(uint _value, string memory _salt, uint _commitExpiry) public pure returns(bytes32) {
-        return keccak256(abi.encode(_value, _salt, _commitExpiry));
+    function generateHash(uint _value, string memory _salt) public pure returns(bytes32) {
+        return keccak256(abi.encode(_value, _salt));
     }
     
     // Returns current block number
