@@ -114,6 +114,9 @@ contract Registrar {
             require(block.number > d.domainExpiry);
         }
         
+        // Reset bidding info - important for clearing highest bidder
+        delete bids[_name];
+        
         // Set bid and reveal expiry times
         b.commitExpiry = block.number + commitLength;
         b.revealExpiry = block.number + commitLength + revealLength;
