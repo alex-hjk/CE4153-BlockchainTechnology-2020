@@ -62,7 +62,7 @@ contract Registrar {
 
     // ******** Commit phase ********
 
-    // Check for inactive bid
+    // Check for inactive bidding cycle
     modifier biddingInactive(string memory _name) {
         if (bids[_name].active) {
             require(block.number > bids[_name].claimExpiry);
@@ -70,9 +70,10 @@ contract Registrar {
         _;
     }
     
-    // Check for active bid
+    // Check for active bidding cycle
     modifier biddingActive(string memory _name) {
         require(bids[_name].active);
+        require(block.number <= bids[_name].claimExpiry);
         _;
     }
     
