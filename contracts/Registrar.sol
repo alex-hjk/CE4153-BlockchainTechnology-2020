@@ -131,8 +131,9 @@ contract Registrar {
     function addBid(string memory _name, bytes32 _commit) public biddingActive(_name) commitPhase(_name) {
         Bidding storage b = bids[_name];
         
-        // Assign hashed commit to address in bid info mapping
+        // Assign hashed commit to address in bid info mapping and store block number
         b.commits[msg.sender].commitHash = _commit;
+        b.commits[msg.sender].commitBlock = block.number;
     }
     
     // ******** Reveal phase ********
