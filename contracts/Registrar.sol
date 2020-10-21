@@ -5,7 +5,12 @@ import "./Ownable.sol";
 
 contract Registrar is Ownable{
     // ******** Domain storage ********
-    uint constant domainExpiry = 2427456;    // 1 year / 13 seconds (estimated block time)
+    uint domainExpiry = 2427456;    // 1 year / 13 seconds (estimated block time)
+
+    // Setter function for domainExpiry length, modifiable only by Owner
+    function setDomainExpiry(uint _domainExpiry) external onlyOwner {
+        domainExpiry = _domainExpiry;
+    }
 
     struct Domain {
         address domainOwner;
@@ -30,9 +35,22 @@ contract Registrar is Ownable{
     // ******** Bidding functionality ********
 
     // Bid, reveal, claim phase lengths, counted in block numbers
-    uint constant commitLength = 3;
-    uint constant revealLength = 3;
-    uint constant claimLength = 3;
+    uint commitLength = 3;
+    uint revealLength = 3;
+    uint claimLength = 3;
+
+    // Setter functions for Bid, Reveal & Claim phase lengths, modifiable only by Owner
+    function setCommitLength(uint _commitLength) external onlyOwner {
+        commitLength = _commitLength;
+    }
+
+    function setRevealLength(uint _revealLength) external onlyOwner {
+        revealLength = _revealLength;
+    }
+
+    function setClaimLength(uint _claimLength) external onlyOwner {
+        claimLength = _claimLength;
+    }
 
     // New Bidding info struct will be created for each new domain name bid initiated
     struct Bidding {
