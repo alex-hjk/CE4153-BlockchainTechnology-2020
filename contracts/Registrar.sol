@@ -167,17 +167,18 @@ contract Registrar is Ownable{
 
         // Only allow highest bidder to claim domain
         require(b.highestBidder == msg.sender);
+
         // Check to make sure value sent >= highestBid
         require(msg.value >= b.highestBid);
+
+        // Set bidding to inactive after claim, state change before external function
+        b.active = false;
 
         // Store domain registration info in registrar
         addDomain(_name, msg.sender);
 
         // Refund excess fee back to msg.sender
         msg.sender.transfer(msg.value - b.highestBid);
-
-        // Set bidding to inactive after claim
-        b.active = false;
     }
 
     // ******** Withdraw functionality ********
