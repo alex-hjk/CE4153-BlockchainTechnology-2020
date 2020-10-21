@@ -184,8 +184,7 @@ contract Registrar is Ownable{
     // ******** Withdraw functionality ********
 
     function withdraw() external onlyOwner{
-        address payable _owner = address(uint160(owner()));
-        _owner.transfer(address(this).balance);
+        msg.sender.transfer(address(this).balance);
     }
 
     // ******** Helper functions ********
