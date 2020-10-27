@@ -5,11 +5,11 @@ import "./Ownable.sol";
 
 contract Registrar is Ownable{
     // ******** Domain storage ********
-    uint domainExpiry = 2427456;    // 1 year / 13 seconds (estimated block time)
+    uint defaultDomainExpiry = 2427456;    // 1 year / 13 seconds (estimated block time)
 
     // Setter function for domainExpiry length, modifiable only by Owner
-    function setDomainExpiry(uint _domainExpiry) external onlyOwner {
-        domainExpiry = _domainExpiry;
+    function setDefaultDomainExpiry(uint _domainExpiry) external onlyOwner {
+        defaultDomainExpiry = _domainExpiry;
     }
 
     struct Domain {
@@ -24,7 +24,7 @@ contract Registrar is Ownable{
     function addDomain(string memory _name, address _owner) private {
         Domain storage d = domains[_name];
         d.domainOwner = _owner;
-        d.domainExpiry = block.number + domainExpiry;
+        d.domainExpiry = block.number + defaultDomainExpiry;
     }
 
     // Remove domain from registrar
@@ -215,5 +215,9 @@ contract Registrar is Ownable{
     // Returns current block number
     function currentBlock() public view returns(uint) {
         return block.number;
+    }
+
+    function getSpecificDomainDetails(string memory _domainName) public view returns (address domainOwner, uint domainExpiry) {
+        return (domains[_domainName].domainOwner, domains[_domainName].domainExpiry);
     }
 }
