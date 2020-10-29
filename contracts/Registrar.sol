@@ -28,7 +28,7 @@ contract Registrar is Ownable{
     }
 
     // Remove domain from registrar
-    function removeDomain(string memory _name) public {
+    function removeDomain(string memory _name) external onlyOwner {
         delete domains[_name];
     }
 
@@ -180,7 +180,7 @@ contract Registrar is Ownable{
 
     // ******** Claim phase ********
 
-    function claimDomain(string memory _name) external biddingActive(_name) claimPhase(_name) payable{
+    function claimDomain(string memory _name) external biddingActive(_name) claimPhase(_name) payable {
         Bidding storage b = bids[_name];
 
         // Only allow highest bidder to claim domain
@@ -216,8 +216,24 @@ contract Registrar is Ownable{
     function currentBlock() public view returns(uint) {
         return block.number;
     }
-
-    function getSpecificDomainDetails(string memory _domainName) public view returns (address domainOwner, uint domainExpiry) {
+    
+    // Returns current commit length, in blocks
+    function getCommitLength() public view returns(uint) {
+        return commitLength;
+    }
+    
+    // Returns current reveal length, in blocks
+    function getRevealLength() public view returns(uint) {
+        return revealLength;
+    }
+    
+    // Returns current claim length, in blocks
+    function getClaimLength() public view returns(uint) {
+        return claimLength;
+    }
+    
+    // Lookup specific domain's owner and expiry
+    function getSpecificDomainDetails(string memory _domainName) public view returns(address domainOwner, uint domainExpiry) {
         return (domains[_domainName].domainOwner, domains[_domainName].domainExpiry);
     }
 }
