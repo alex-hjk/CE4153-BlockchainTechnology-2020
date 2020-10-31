@@ -111,7 +111,7 @@ contract Bidder is Ownable {
         // Only proceed if empty or expired domain
         uint ex = reg.getExpiry(_name);
         if (ex != 0) {
-            require(block.number > ex);
+            require(block.number >= ex);
         }
 
         // Reset bidding info - important for clearing highest bidder
