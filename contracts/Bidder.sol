@@ -185,7 +185,7 @@ contract Bidder is Ownable {
         msg.sender.transfer(address(this).balance);
     }
     
-        // ******** Helper functions ********
+    // ******** Helper functions ********
 
     // Generates hashed commit, can be called for free externally
     function generateHash(uint _value, string memory _salt) public pure returns(bytes32) {
