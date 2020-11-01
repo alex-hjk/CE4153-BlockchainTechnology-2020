@@ -194,8 +194,11 @@ contract Bidder is Ownable {
         // Store domain registration info in registrar for target resolution address
         reg.addDomain(_name, _target);
 
-        // Refund excess fee back to msg.sender
-        msg.sender.transfer(msg.value - b.highestBid);
+        // Refund excess fee back to msg.sender if necessary
+        if (msg.value - b.highestBid > 0) {
+            msg.sender.transfer(msg.value - b.highestBid);
+        }
+
 
         // Emit event
         emit ClaimDomain(_name, msg.sender);
