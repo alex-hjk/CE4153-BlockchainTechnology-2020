@@ -33,6 +33,71 @@ contract("TestRegistrarBidder", accounts => {
             const utilBlockNumber = await bidderInstance.currentBlock();
             assert.strictEqual(Number(utilBlockNumber), currentBlockNumber, "block number equal");
         });
+
+        it("should be able to withdraw bidder balance to contract owner", async() => {
+            const setBidder = await registrarInstance.setBidder(bidderInstance.address, {from: accounts[0]});
+            assert.strictEqual(setBidder.receipt.status, true, "transaction success");
+
+            const inputHash = await web3.utils.soliditySha3({t: 'uint', v: bidValues[0]},{t: 'string', v: bidSalts[0]});
+            const newBid = await bidderInstance.startBid(domains[0], inputHash, {from: accounts[5]});
+            assert.strictEqual(newBid.receipt.status, true, "transaction success");
+
+            for(i = 0; i < 3; i++) {
+                await blockMinerInstance.mine();
+            };
+
+            const revealBid = await bidderInstance.revealBid(domains[0], bidValues[0], bidSalts[0], {from: accounts[5]});
+            assert.strictEqual(revealBid.receipt.status, true, "transaction success");
+
+            for(i = 0; i < 3; i++) {
+                await blockMinerInstance.mine();
+            };
+
+            const ownerBalanceBefore = BigInt(await web3.eth.getBalance(accounts[0]));
+            const bidderBalanceBefore = BigInt(await web3.eth.getBalance(bidderInstance.address));
+
+            const claimDomain = await bidderInstance.claimDomain(domains[0], {from: accounts[5], value: bidValues[0]});
+            assert.strictEqual(claimDomain.receipt.status, true, "transaction success");
+
+            const bidderBalanceAfter = BigInt(await web3.eth.getBalance(bidderInstance.address));
+            assert.strictEqual(bidderBalanceAfter > BigInt(0), true, "bidder balance after >= 0");
+
+            const bidderBalanceAdded = bidderBalanceAfter - bidderBalanceBefore;
+            assert.strictEqual(bidderBalanceAdded == BigInt(bidValues[0]), true, "bidder balance added <= bid value");
+
+            const withdraw = await bidderInstance.withdraw({from: accounts[0]});
+            assert.strictEqual(withdraw.receipt.status, true, "transaction success");
+
+            const ownerBalanceAfter = BigInt(await web3.eth.getBalance(accounts[0]));
+            const ownerBalanceAdded = ownerBalanceAfter - ownerBalanceBefore;
+            assert.strictEqual(ownerBalanceAdded > BigInt(0), true, "owner balance added >= 0");
+            assert.strictEqual(ownerBalanceAdded < BigInt(bidValues[0]), true, "owner balance added <= bid value");
+        });
+
+        it("should not be able to withdraw bidder balance to non-contract owner", async() => {
+            const setBidder = await registrarInstance.setBidder(bidderInstance.address, {from: accounts[0]});
+            assert.strictEqual(setBidder.receipt.status, true, "transaction success");
+
+            const inputHash = await web3.utils.soliditySha3({t: 'uint', v: bidValues[0]},{t: 'string', v: bidSalts[0]});
+            const newBid = await bidderInstance.startBid(domains[0], inputHash, {from: accounts[6]});
+            assert.strictEqual(newBid.receipt.status, true, "transaction success");
+
+            for(i = 0; i < 3; i++) {
+                await blockMinerInstance.mine();
+            };
+
+            const revealBid = await bidderInstance.revealBid(domains[0], bidValues[0], bidSalts[0], {from: accounts[6]});
+            assert.strictEqual(revealBid.receipt.status, true, "transaction success");
+
+            for(i = 0; i < 3; i++) {
+                await blockMinerInstance.mine();
+            };
+
+            const claimDomain = await bidderInstance.claimDomain(domains[0], {from: accounts[6], value: bidValues[0]});
+            assert.strictEqual(claimDomain.receipt.status, true, "transaction success");
+
+            await utils.shouldThrow(bidderInstance.withdraw({from: accounts[1]}));
+        });
     });
 
     context("registrar utils", async() => {
@@ -136,8 +201,8 @@ contract("TestRegistrarBidder", accounts => {
             const bidClaimExpiry = await bidderInstance.getBidClaimExpiry(domains[0]);
             assert.strictEqual(Number(bidClaimExpiry), blockNumber+9, "bid commit expiry equal");
 
-            const bidHighestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0])).toString();
-            assert.strictEqual(bidHighestBid, "0", "bid highest bid equal");
+            const bidHighestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0]));
+            assert.strictEqual(bidHighestBid, BigInt(0), "bid highest bid equal");
 
             const bidHighestBidder = await bidderInstance.getBidHighestBidder(domains[0]);
             assert.strictEqual(bidHighestBidder, zeroAddress, "bid highest bidder equal");
@@ -322,8 +387,8 @@ contract("TestRegistrarBidder", accounts => {
             revealBid = await bidderInstance.revealBid(domains[0], bidValues[0], bidSalts[0], {from: accounts[3]});
             assert.strictEqual(revealBid.receipt.status, true, "transaction success");
 
-            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0])).toString();
-            assert.strictEqual(highestBid, bidValues[0], "bid highest bid equal");
+            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0]));
+            assert.strictEqual(highestBid, BigInt(bidValues[0]), "bid highest bid equal");
 
             highestBidder = await bidderInstance.getBidHighestBidder(domains[0]);
             assert.strictEqual(highestBidder, accounts[3], "bid highest bidder equal");
@@ -331,8 +396,8 @@ contract("TestRegistrarBidder", accounts => {
             revealBid = await bidderInstance.revealBid(domains[0], bidValues[1], bidSalts[1], {from: accounts[4]});
             assert.strictEqual(revealBid.receipt.status, true, "transaction success");
 
-            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0])).toString();
-            assert.strictEqual(highestBid, bidValues[1], "bid highest bid equal");
+            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0]));
+            assert.strictEqual(highestBid, BigInt(bidValues[1]), "bid highest bid equal");
 
             highestBidder = await bidderInstance.getBidHighestBidder(domains[0]);
             assert.strictEqual(highestBidder, accounts[4], "bid highest bidder equal");
@@ -354,8 +419,8 @@ contract("TestRegistrarBidder", accounts => {
             revealBid = await bidderInstance.revealBid(domains[0], bidValues[0], bidSalts[1], {from: accounts[6]});
             assert.strictEqual(revealBid.receipt.status, true, "transaction success");
 
-            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0])).toString();
-            assert.strictEqual(highestBid, bidValues[0], "bid highest bid equal");
+            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0]));
+            assert.strictEqual(highestBid, BigInt(bidValues[0]), "bid highest bid equal");
 
             highestBidder = await bidderInstance.getBidHighestBidder(domains[0]);
             assert.strictEqual(highestBidder, accounts[6], "bid highest bidder equal");
@@ -363,8 +428,8 @@ contract("TestRegistrarBidder", accounts => {
             revealBid = await bidderInstance.revealBid(domains[0], bidValues[0], bidSalts[0], {from: accounts[5]});
             assert.strictEqual(revealBid.receipt.status, true, "transaction success");
 
-            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0])).toString();
-            assert.strictEqual(highestBid, bidValues[0], "bid highest bid equal");
+            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0]));
+            assert.strictEqual(highestBid, BigInt(bidValues[0]), "bid highest bid equal");
 
             highestBidder = await bidderInstance.getBidHighestBidder(domains[0]);
             assert.strictEqual(highestBidder, accounts[5], "bid highest bidder equal");
@@ -412,20 +477,20 @@ contract("TestRegistrarBidder", accounts => {
             };
 
             const accountBalanceBefore = BigInt(await web3.eth.getBalance(accounts[9]));
-            const bidderBalanceBefore = await web3.eth.getBalance(bidderInstance.address);
+            const bidderBalanceBefore = BigInt(await web3.eth.getBalance(bidderInstance.address));
 
             const claimDomain = await bidderInstance.claimDomain(domains[0], {from: accounts[9], value: bidValues[0]});
             assert.strictEqual(claimDomain.receipt.status, true, "transaction success");
 
             const accountBalanceAfter = BigInt(await web3.eth.getBalance(accounts[9]));
-            const bidderBalanceAfter = await web3.eth.getBalance(bidderInstance.address);
+            const bidderBalanceAfter = BigInt(await web3.eth.getBalance(bidderInstance.address));
             assert.strictEqual(accountBalanceAfter <= accountBalanceBefore, true, "account balance after <= account balance before");
-            assert.strictEqual(bidderBalanceAfter >= 0, true, "bidder balance after >=0");
+            assert.strictEqual(bidderBalanceAfter >= BigInt(0), true, "bidder balance after >=0");
 
-            const accountBalanceUsed = (accountBalanceBefore - accountBalanceAfter).toString();
-            const bidderBalanceAdded = (bidderBalanceAfter - bidderBalanceBefore).toString();
-            assert.strictEqual(accountBalanceUsed >= bidValues[0], true, "account balance used >= bid value");
-            assert.strictEqual(bidderBalanceAdded <= bidValues[0], true, "bidder balance added <= bid value");
+            const accountBalanceUsed = accountBalanceBefore - accountBalanceAfter;
+            const bidderBalanceAdded = bidderBalanceAfter - bidderBalanceBefore;
+            assert.strictEqual(accountBalanceUsed >= BigInt(bidValues[0]), true, "account balance used >= bid value");
+            assert.strictEqual(bidderBalanceAdded <= BigInt(bidValues[0]), true, "bidder balance added <= bid value");
 
             const domainOwner = await registrarInstance.getOwner(domains[0]);
             assert.strictEqual(domainOwner, accounts[9], "domain owner equal");
@@ -455,18 +520,18 @@ contract("TestRegistrarBidder", accounts => {
             };
 
             const accountBalanceBefore = BigInt(await web3.eth.getBalance(accounts[1]));
-            const bidderBalanceBefore = await web3.eth.getBalance(bidderInstance.address);
+            const bidderBalanceBefore = BigInt(await web3.eth.getBalance(bidderInstance.address));
 
             const claimDomain = await bidderInstance.claimDomain(domains[0], {from: accounts[1], value: bidValues[3]});
             assert.strictEqual(claimDomain.receipt.status, true, "transaction success");
 
             const accountBalanceAfter = BigInt(await web3.eth.getBalance(accounts[1]));
-            const bidderBalanceAfter = await web3.eth.getBalance(bidderInstance.address);
+            const bidderBalanceAfter = BigInt(await web3.eth.getBalance(bidderInstance.address));
             assert.strictEqual(accountBalanceAfter <= accountBalanceBefore, true, "account balance after <= account balance before");
-            assert.strictEqual(bidderBalanceAfter >= 0, true, "bidder balance after >=0");
+            assert.strictEqual(bidderBalanceAfter >= BigInt(0), true, "bidder balance after >=0");
 
-            const bidderBalanceAdded = (bidderBalanceAfter - bidderBalanceBefore).toString();
-            assert.strictEqual(bidderBalanceAdded <= (Number(bidValues[3]) - Number(bidValues[0])).toString(), true, "bidder balance added <= bid value");
+            const bidderBalanceAdded = bidderBalanceAfter - bidderBalanceBefore;
+            assert.strictEqual(bidderBalanceAdded <= BigInt((Number(bidValues[3]) - Number(bidValues[0]))), true, "bidder balance added <= bid value");
         });
 
         it("should be not able to claim domain if post-gas value sent is less than highest bid", async() => {
