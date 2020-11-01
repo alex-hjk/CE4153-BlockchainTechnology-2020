@@ -45,13 +45,13 @@ contract Registrar is Ownable {
 
 
     // Commit domain to registrar after claimed bid
-    function addDomain(string memory _name, address _owner) external onlyBidder {
+    function addDomain(string memory _name, address _target) external onlyBidder {
         Domain storage d = domains[_name];
-        d.domainOwner = _owner;
+        d.domainOwner = _target;
         d.domainExpiry = block.number + defaultDomainExpiry;
 
         // Emit event to log domain name and owner address
-        emit AddDomain(_name, _owner, d.domainExpiry);
+        emit AddDomain(_name, _target, d.domainExpiry);
     }
 
     // Remove domain from registrar

@@ -175,7 +175,7 @@ contract Bidder is Ownable {
 
     // ******** Claim phase ********
 
-    function claimDomain(string memory _name) external biddingActive(_name) claimPhase(_name) payable {
+    function claimDomain(string memory _name, address _target) external biddingActive(_name) claimPhase(_name) payable {
         Bidding storage b = bids[_name];
 
         // Only allow highest bidder to claim domain
@@ -187,8 +187,8 @@ contract Bidder is Ownable {
         // Set bidding to inactive after claim, state change before external function
         b.active = false;
 
-        // Store domain registration info in registrar
-        reg.addDomain(_name, msg.sender);
+        // Store domain registration info in registrar for target resolution address
+        reg.addDomain(_name, _target);
 
         // Refund excess fee back to msg.sender
         msg.sender.transfer(msg.value - b.highestBid);
