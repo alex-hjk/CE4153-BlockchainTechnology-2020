@@ -6,7 +6,7 @@ const auctionStage = {
   END: "end"
 };
 
-let auctionsListingDiv, newAuctionDiv, moreBodyDiv, registeredDomainsListing, accountInfoDiv;
+let auctionsListingDiv, newBidDiv, moreBodyDiv, registeredDomainsListing, accountInfoDiv;
 let api;
 
 let auctionsMap = {
@@ -24,35 +24,23 @@ window.addEventListener("load", load);
 
 async function load() {
   //get elements
-  auctionsListingDiv = document.getElementById("auctions__listing");
-  newAuctionDiv = document.getElementById("new_auction");
-  moreBodyDiv = document.getElementById("more__body");
   registeredDomainsListing = document.getElementById("registered__listing");
-  accountInfoDiv = document.getElementById("account__info");
 
   //get api
   api = await app.getApi();
 
-  document.getElementById("auctions__refresh").onclick = fetchAuctionsListing;
   document.getElementById("registered__button").onclick = fetchRegisteredDomains;
-  document.getElementById("new_auction__button").onclick = startNewAuction;
+  document.getElementById("query__button").onclick = queryDomain;
+  document.getElementById("new_bid__button").onclick = startNewBid;
+  document.getElementById("add_bid__button").onclick = addBid;
+  document.getElementById("reveal_bid__button").onclick = revealBid;
+  document.getElementById("claim__button").onclick = claimDomain;
   document.getElementById("transaction__send").onclick = sendEther;
 
   //renders + state changes
-  await fetchAuctionsListing();
-  // renderAuctionsListing();
   await fetchRegisteredDomains();
-  await renderAccount();
 
   //set event subscriptions
-  api.subscribe("NewAuctionStarted", ({ auctionAddress, node }) => {
-    auctionsMap[node] = {
-      domain: node,
-      address: auctionAddress,
-      stage: auctionStage.BID,
-    };
-    renderAuctionsListing();
-  });
   api.subscribe("NewDomainClaimed", ({ newOwner, node }) => {
     registeredDomainsMap[node] = {
       domain: node,
@@ -67,22 +55,23 @@ async function load() {
 }
 
 //button functions
-async function startNewAuction() {
-  const domain = document.getElementById("new_auction__domain").value;
+async function startNewBid() {
+  const domain = document.getElementById("new_bid__domain").value;
+  const amount = document.getElementById("new_bid__amount").value;
+  const salt = document.getElementById("new_bid__salt").value;
 
-  //check if domain is being auctioned
-  if (auctionsMap[domain]) {
-    alert("domain already being auctioned");
+  if (domain === "") {
+    alert("Domain cannot be empty string");
     return;
-  } else if (domain === "") {
-    alert("domain cannot be empty string");
+  } else if (amount <= 0) {
+    alert("Amount has to be positive");
     return;
   }
 
   try {
-    await api.startAuction(domain);
+    await api.startBid(domain, amount, salt);
   } catch (e) {
-    alert("cannot start auction")
+    alert("Failed to start bid");
   }
 }
 
@@ -265,16 +254,8 @@ async function fetchRegisteredDomains() {
   }
 }
 
-async function fetchAuctionsListing() {
-  try {
-    const auctions = await api.getCurrentAuctions();
-    auctionsMap = {};
-    auctions.forEach(auction => auctionsMap[auction.domain] = auction);
-    renderAuctionsListing();
-  } catch (e) {
-    alert("cannot fetch auctions");
-    console.log(e);
-  }
+async function queryDomain() {
+
 }
 
 //utility
@@ -319,7 +300,7 @@ function input(type) {
   return i;
 }
 
-function button(text, callback = () => {}) {
+function button(text, callback = () => { }) {
   const b = element("button");
   b.innerText = text;
   b.onclick = callback;
