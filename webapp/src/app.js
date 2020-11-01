@@ -17,7 +17,7 @@ class App {
 
   async init() {
     this._account = (await this.getAccount()).address;    //by default set account[0] as the main acc
-    const netId = await this._web3.eth.net.getId();       //connect to Registrar
+    const netId = await this._web3.eth.net.getId();       //connect to domainRegistry
     const network = registrarArtifact.networks[netId];
     this.connectDomainRegistry(network.address);
 
@@ -39,10 +39,11 @@ class App {
 
 
   //returns address of auction
-  async startAuction(domain) {
+  async startBid(domain, amount, salt) {
+    const commit = web3.utils.soliditySha3({t: 'uint256', v: amount}, {t: 'string', v: salt})
     return this._domainRegistry
       .methods
-      .startAuction(domain)
+      .startBid(domain, commit)
       .send({
         from: this._account,
         value: 0,
