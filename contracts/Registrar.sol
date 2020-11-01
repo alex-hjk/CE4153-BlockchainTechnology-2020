@@ -12,6 +12,11 @@ contract Registrar is Ownable {
     function setBidder(address _bidderAddress) external onlyOwner {
         _bidder = _bidderAddress;
     }
+
+    // Gets bidder contract address
+    function getBidder() public view returns(address) {
+        return _bidder;
+    }
     
     modifier onlyBidder() {
         require(msg.sender == _bidder);
@@ -19,11 +24,17 @@ contract Registrar is Ownable {
     }
     
     // ******** Domain storage ********
-    uint defaultDomainExpiry = 2427456;    // 1 year / 13 seconds (estimated block time)
+    // uint defaultDomainExpiry = 2427456;    // 1 year / 13 seconds (estimated block time)
+    uint defaultDomainExpiry = 30;
 
     // Setter function for domainExpiry length, modifiable only by Owner
     function setDefaultDomainExpiry(uint _domainExpiry) external onlyOwner {
         defaultDomainExpiry = _domainExpiry;
+    }
+
+    // Get default domain expiry
+    function getDefaultDomainExpiry() public view returns(uint) {
+        return defaultDomainExpiry;
     }
 
     struct Domain {
@@ -55,8 +66,13 @@ contract Registrar is Ownable {
     }
     
     // Gets domain expiry
-    function getExpiry(string memory _name) public view returns(uint) {
-        return domains[_name].domainExpiry;
+    function getExpiry(string memory _domainName) public view returns(uint) {
+        return domains[_domainName].domainExpiry;
+    }
+
+    // Get domain owner
+    function getOwner(string memory _domainName) public view returns(address) {
+        return domains[_domainName].domainOwner;
     }
     
     // Lookup specific domain's owner and expiry

@@ -145,7 +145,7 @@ contract Bidder is Ownable {
         Bidding storage b = bids[_name];
 
         // Compute commit hash based on bid value and salt
-        bytes32 commitCalc = keccak256(abi.encode(_value, _salt));
+        bytes32 commitCalc = keccak256(abi.encodePacked(_value, _salt));
 
         // Require calculated hash to match previously committed hash within same bidding cycle
         require(b.commits[msg.sender].commitHash == commitCalc);
@@ -155,6 +155,12 @@ contract Bidder is Ownable {
         if (b.highestBid < _value) {
             b.highestBid = _value;
             b.highestBidder = msg.sender;
+        }
+        
+        if (b.highestBid == _value) {
+            if(b.commits[msg.sender].commitBlock < b.commits[b.highestBidder].commitBlock) {
+                b.highestBidder = msg.sender;
+            }
         }
     }
 
@@ -185,11 +191,11 @@ contract Bidder is Ownable {
         msg.sender.transfer(address(this).balance);
     }
     
-        // ******** Helper functions ********
+    // ******** Helper functions ********
 
     // Generates hashed commit, can be called for free externally
     function generateHash(uint _value, string memory _salt) public pure returns(bytes32) {
-        return keccak256(abi.encode(_value, _salt));
+        return keccak256(abi.encodePacked(_value, _salt));
     }
 
     // Returns current commit length, in blocks
@@ -210,5 +216,43 @@ contract Bidder is Ownable {
     // Returns current block number
     function currentBlock() public view returns(uint) {
         return block.number;
+    }
+
+    // ******** Bid information getters ********
+
+    function getBidCommitHash(string memory _name, address _addr) public view returns(bytes32) {
+        return bids[_name].commits[_addr].commitHash;
+    }
+
+    function getBidCommitBlockNumber(string memory _name, address _addr) public view returns(uint) {
+        return bids[_name].commits[_addr].commitBlock;
+    }
+
+    function getBidIsActive(string memory _name) public view returns(bool) {
+        return bids[_name].active;
+    }
+
+    function getBidCommitExpiry(string memory _name) public view returns(uint) {
+        return bids[_name].commitExpiry;
+    }
+
+    function getBidRevealExpiry(string memory _name) public view returns(uint) {
+        return bids[_name].revealExpiry;
+    }
+
+    function getBidClaimExpiry(string memory _name) public view returns(uint) {
+        return bids[_name].claimExpiry;
+    }
+
+    function getBidHighestBid(string memory _name) public view returns(uint) {
+        return bids[_name].highestBid;
+    }
+
+    function getBidHighestBidder(string memory _name) public view returns(address) {
+        return bids[_name].highestBidder;
+    }
+
+    function getReg() public view returns(address) {
+        return address(reg);
     }
 }
