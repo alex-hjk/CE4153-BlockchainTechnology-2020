@@ -115,6 +115,28 @@ async function revealBid() {
   }
 }
 
+async function claimDomain() {
+  const domain = document.getElementById("claim__domain").value;
+  const address = document.getElementById("claim__address").value;
+  const amount = document.getElementById("claim__amount").value;
+  if (domain === "") {
+    alert("Domain cannot be empty string");
+    return;
+  } else if (!api.isAddress(address)){
+    alert("Address not valid");
+    return;
+  } else if (amount <= 0) {
+    alert("Amount has to be positive");
+    return;
+  }
+
+  try {
+    await api.claimDomain(domain, address, amount);
+  } catch (e) {
+    alert("Failed to claim domain");
+  }
+}
+
 async function sendEther() {
   const domain = document.getElementById("transaction__domain").value;
   const valueInWei = document.getElementById("transaction__amount").value;

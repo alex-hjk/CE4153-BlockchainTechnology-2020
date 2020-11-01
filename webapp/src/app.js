@@ -40,7 +40,7 @@ class App {
 
   //returns address of auction
   async startBid(domain, amount, salt) {
-    const commit = web3.utils.soliditySha3({t: 'uint256', v: amount}, {t: 'string', v: salt})
+    const commit = this._web3.utils.soliditySha3({t: 'uint256', v: amount}, {t: 'string', v: salt})
     return this._domainRegistry
       .methods
       .startBid(domain, commit)
@@ -51,7 +51,7 @@ class App {
   }
 
   async addBid(domain, amount, salt) {
-    const commit = web3.utils.soliditySha3({t: 'uint256', v: amount}, {t: 'string', v: salt})
+    const commit = this._web3.utils.soliditySha3({t: 'uint256', v: amount}, {t: 'string', v: salt})
     return this._domainRegistry
       .methods
       .addBid(domain, commit)
@@ -68,6 +68,16 @@ class App {
       .send({
         from: this._account,
         value: 0,
+      });
+  }
+
+  async claimDomain(domain, address, amount) {
+    return this._domainRegistry
+      .methods
+      .claimDomain(domain, address)
+      .send({
+        from: this._account,
+        value: amount
       });
   }
 
@@ -91,6 +101,10 @@ class App {
       to: address,
       value: valueInWei,
     });
+  }
+
+  async isAddress(address) {
+    return this._web3.utils.isAddress(address);
   }
 
   setAccount(address) {
