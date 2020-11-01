@@ -72,6 +72,11 @@ contract Registrar is Ownable {
         return domains[_name].domainExpiry;
     }
     
+    // Gets domain owner - name resolution service
+    function getOwner(string memory _name) public view returns(address) {
+        return domains[_name].domainOwner;
+    }
+
     // Lookup specific domain's owner and expiry
     function getSpecificDomainDetails(string memory _domainName) public view returns(address domainOwner, uint domainExpiry) {
         return (domains[_domainName].domainOwner, domains[_domainName].domainExpiry);
