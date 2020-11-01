@@ -67,6 +67,18 @@ contract Bidder is Ownable {
     // Map domain name to Bidding info
     mapping (string => Bidding) public bids;
 
+    // ******** Events ********
+
+    event StartBid(
+        string domainName,
+        address bidder
+    );
+
+    event ClaimDomain(
+        string domainName,
+        address owner
+    );
+
     // ******** Commit phase ********
 
     // Check for inactive bidding cycle
@@ -128,6 +140,9 @@ contract Bidder is Ownable {
 
         // Set bid to active
         b.active = true;
+
+        // Emit event
+        emit StartBid(_name, msg.sender);
     }
 
     // Add to an active bid
@@ -177,6 +192,9 @@ contract Bidder is Ownable {
 
         // Refund excess fee back to msg.sender
         msg.sender.transfer(msg.value - b.highestBid);
+
+        // Emit event
+        emit ClaimDomain(_name, msg.sender);
     }
 
     // ******** Withdraw functionality ********

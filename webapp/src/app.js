@@ -17,8 +17,7 @@ class App {
 
   async init() {
     this._account = (await this.getAccount()).address;    //by default set account[0] as the main acc
-
-    const netId = await this._web3.eth.net.getId();       //connect to domainRegistry
+    const netId = await this._web3.eth.net.getId();       //connect to Registrar
     const network = registrarArtifact.networks[netId];
     this.connectDomainRegistry(network.address);
 

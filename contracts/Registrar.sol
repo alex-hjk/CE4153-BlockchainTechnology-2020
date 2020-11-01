@@ -18,6 +18,15 @@ contract Registrar is Ownable {
         _;
     }
     
+    // ******** Events ********
+
+    // Indexed parameters can be used for reverse lookup by filtering through historical events
+    event AddDomain(
+        string domainName,
+        address indexed owner,
+        uint expiry
+    );
+
     // ******** Domain storage ********
     uint defaultDomainExpiry = 2427456;    // 1 year / 13 seconds (estimated block time)
 
@@ -34,11 +43,15 @@ contract Registrar is Ownable {
     // Create mapping from domain name string to domain info struct
     mapping (string => Domain) public domains;
 
+
     // Commit domain to registrar after claimed bid
     function addDomain(string memory _name, address _owner) external onlyBidder {
         Domain storage d = domains[_name];
         d.domainOwner = _owner;
         d.domainExpiry = block.number + defaultDomainExpiry;
+
+        // Emit event to log domain name and owner address
+        emit AddDomain(_name, _owner, d.domainExpiry);
     }
 
     // Remove domain from registrar
