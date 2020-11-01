@@ -160,16 +160,20 @@ contract Bidder is Ownable {
         Bidding storage b = bids[_name];
 
         // Compute commit hash based on bid value and salt
-        bytes32 commitCalc = keccak256(abi.encode(_value, _salt));
+        bytes32 commitCalc = keccak256(abi.encodePacked(_value, _salt));
 
         // Require calculated hash to match previously committed hash within same bidding cycle
         require(b.commits[msg.sender].commitHash == commitCalc);
         require(b.commits[msg.sender].commitBlock <= b.commitExpiry);
 
-        // Check if bid value is highest bid and set if true
+        // Check if bid value is highest bid and set if true, with equal bid tiebreaker based on earlier commit and equal commit tiebreaker based on earlier reveal tx
         if (b.highestBid < _value) {
             b.highestBid = _value;
             b.highestBidder = msg.sender;
+        } else if (b.highestBid == _value) {
+            if (b.commits[msg.sender].commitBlock < b.commits[b.highestBidder].commitBlock) {
+                b.highestBidder = msg.sender;
+            }
         }
     }
 
@@ -207,7 +211,7 @@ contract Bidder is Ownable {
 
     // Generates hashed commit, can be called for free externally
     function generateHash(uint _value, string memory _salt) public pure returns(bytes32) {
-        return keccak256(abi.encode(_value, _salt));
+        return keccak256(abi.encodePacked(_value, _salt));
     }
 
     // Returns current commit length, in blocks
