@@ -59,29 +59,80 @@
   </div>
 
   <div class="card">
-    <div id="auctions">
-      <h3>Ongoing Auctions</h3>
-      <button id="auctions__refresh">Refresh</button>
-      <div id="auctions__listing" class="listing"></div>
+    <div id="registered">
+      <h3>Registered Domains</h3>
+      <button id="registered__button">Refresh</button>
+      <div id="registered__listing" class="listing"></div>
     </div>
     <hr/>
     <div id="new_auction">
-      <h3>Start New Auction</h3>
-      <label for="new_auction__domain">Domain Name:</label>
-      <input id="new_auction__domain" type="text"/>
-      <button id="new_auction__button">Start Auction</button>
-    </div>
-    <hr/>
-    <div id="more">
-      <h3>Auction Controls</h3>
-      <div id="more__body">No Auction Selected</div>
+      <h3>Query Domain</h3>
+      <label for="query__domain">Domain Name:</label>
+      <input id="query__domain" type="text"/>
+      <button id="query__button">Query</button>
     </div>
   </div>
 
-  <div id="registered" class="card">
-    <h3>Registered Domains</h3>
-    <button id="registered__button">Refresh</button>
-    <div id="registered__listing" class="listing"></div>
+  <div class="card">
+    <div id="new_bid">
+      <h3>Start New Bid</h3>
+      <div>
+        <label for="new_bid__domain">Domain Name:</label>
+        <input id="new_bid__domain" type="text"/>
+      </div>
+      <div>
+        <label for="new_bid__amount">Amount (wei):</label>
+        <input id="new_bid__amount" type="number"/>
+      </div>
+      <div>
+        <label for="new_bid__salt">Salt:</label>
+        <input id="new_bid__salt" type="text"/>
+      </div>
+      <button id="new_bid__button">Start Bid</button>
+    </div>
+    <hr/>
+    <div id="add_bid">
+      <h3>Add Bid</h3>
+      <div>
+        <label for="add_bid__domain">Domain Name:</label>
+        <input id="add_bid__domain" type="text"/>
+      </div>
+      <div>
+        <label for="add_bid__amount">Amount (wei):</label>
+        <input id="add_bid__amount" type="number"/>
+      </div>
+      <div>
+        <label for="add_bid__salt">Salt:</label>
+        <input id="add_bid__salt" type="text"/>
+      </div>
+      <button id="add_bid__button">Add Bid</button>
+    </div>
+    <hr/>
+    <div id="reveal_bid">
+      <h3>Reveal Bid</h3>
+      <div>
+        <label for="reveal_bid__domain">Domain Name:</label>
+        <input id="reveal_bid__domain" type="text"/>
+      </div>
+      <div>
+        <label for="reveal_bid__amount">Amount (wei):</label>
+        <input id="reveal_bid__amount" type="number"/>
+      </div>
+      <div>
+        <label for="reveal_bid__salt">Salt:</label>
+        <input id="reveal_bid__salt" type="text"/>
+      </div>
+      <button id="reveal_bid__button">Reveal Bid</button>
+    </div>
+    <hr/>
+    <div id="claim_domain">
+      <h3>Claim Domain</h3>
+      <div>
+        <label for="claim__domain">Domain Name:</label>
+        <input id="claim__domain" type="text"/>
+      </div>
+      <button id="claim__button">Claim Domain</button>
+    </div>
   </div>
 
   <div id="transaction" class="card">
@@ -95,11 +146,6 @@
       <input id="transaction__amount" type="number"/>
     </div>
     <button id="transaction__send">Send</button>
-  </div>
-
-  <div id="account" class="card">
-    <h3>My Account</h3>
-    <div id="account__info"></div>
   </div>
 </body>
 </html>
