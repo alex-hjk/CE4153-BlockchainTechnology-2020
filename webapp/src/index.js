@@ -75,6 +75,46 @@ async function startNewBid() {
   }
 }
 
+async function addBid() {
+  const domain = document.getElementById("add_bid__domain").value;
+  const amount = document.getElementById("add_bid__amount").value;
+  const salt = document.getElementById("add_bid__salt").value;
+
+  if (domain === "") {
+    alert("Domain cannot be empty string");
+    return;
+  } else if (amount <= 0) {
+    alert("Amount has to be positive");
+    return;
+  }
+
+  try {
+    await api.addBid(domain, amount, salt);
+  } catch (e) {
+    alert("Failed to add bid");
+  }
+}
+
+async function revealBid() {
+  const domain = document.getElementById("reveal_bid__domain").value;
+  const amount = document.getElementById("reveal_bid__amount").value;
+  const salt = document.getElementById("reveal_bid__salt").value;
+
+  if (domain === "") {
+    alert("Domain cannot be empty string");
+    return;
+  } else if (amount <= 0) {
+    alert("Amount has to be positive");
+    return;
+  }
+
+  try {
+    await api.revealBid(domain, amount, salt);
+  } catch (e) {
+    alert("Failed to reveal bid");
+  }
+}
+
 async function sendEther() {
   const domain = document.getElementById("transaction__domain").value;
   const valueInWei = document.getElementById("transaction__amount").value;

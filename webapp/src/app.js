@@ -50,6 +50,27 @@ class App {
       });
   }
 
+  async addBid(domain, amount, salt) {
+    const commit = web3.utils.soliditySha3({t: 'uint256', v: amount}, {t: 'string', v: salt})
+    return this._domainRegistry
+      .methods
+      .addBid(domain, commit)
+      .send({
+        from: this._account,
+        value: 0,
+      });
+  }
+
+  async revealBid(domain, amount, salt) {
+    return this._domainRegistry
+      .methods
+      .revealBid(domain, amount, salt)
+      .send({
+        from: this._account,
+        value: 0,
+      });
+  }
+
   //returns accounts: array of {address: string, balance: number}
   async getAccount() {
     const eth = this._web3.eth;
