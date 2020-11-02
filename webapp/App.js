@@ -12,8 +12,10 @@ class App extends React.Component {
     super(props);
     this.state = {
       queryInput: "",
-      startInput: "",
-      addInput: "",
+      startNameInput: "",
+      startHashInput: "",
+      addNameInput: "",
+      addHashInput: "",
       revealNameInput: "",
       revealValueInput: "",
       revealSaltInput: "",
@@ -40,19 +42,39 @@ class App extends React.Component {
   }
   
   // Start bid functionality
-  handleStartChange = (e) => {
-    this.setState({ startInput: e.target.value });
+  handleStartNameChange = (e) => {
+    this.setState({ startNameInput: e.target.value });
+  }
+  handleStartHashChange = (e) => {
+    this.setState({ startHashInput: e.target.value });
   }
   handleStart = async () => {
-    let result = await startBid(this.state.startInput);
+    let result = await startBid(this.state.startNameInput, this.state.startHashInput);
   }
 
     // Add bid functionality
-    handleAddChange = (e) => {
-      this.setState({ addInput: e.target.value });
+    handleAddNameChange = (e) => {
+      this.setState({ addNameInput: e.target.value });
+    }
+    handleAddHashChange = (e) => {
+      this.setState({ addHashInput: e.target.value });
     }
     handleAdd = async () => {
-      let result = await startBid(this.state.addInput);
+      let result = await addBid(this.state.addNameInput, this.state.addHashInput);
+    }
+
+    // Reveal bid functionality
+    handleRevealNameChange = (e) => {
+      this.setState({ revealNameInput: e.target.value });
+    }
+    handleRevealBidChange = (e) => {
+      this.setState({ revealBidInput: e.target.value });
+    }
+    handleRevealSaltChange = (e) => {
+      this.setState({ revealSaltInput: e.target.value });
+    }
+    handleAdd = async () => {
+      let result = await addBid(this.state.revealNameInput, this.state.revealBidInput, this.state.revealSaltInput);
     }
 
   render() {
@@ -74,7 +96,7 @@ class App extends React.Component {
           placeholder="Enter Domain to query"
           value={this.state.value}
           onChange={this.handleQueryChange}
-          style = {{width: "250px"}}
+          style={{width: "250px"}}
         />{"  "}
         <input type="submit" value="Query Deposit" onClick={this.handleQuery} />
         <p>
@@ -86,9 +108,16 @@ class App extends React.Component {
         <input
           type="text"
           placeholder="Enter Domain to start a bid for"
-          value={this.state.startValue}
-          onChange={this.handleStartChange}
-          style = {{width: "250px"}}
+          value={this.state.startNameValue}
+          onChange={this.handleStartNameChange}
+          style={{width: "250px"}}
+        />{"  "}
+          <input
+          type="text"
+          placeholder="Enter bid commit hash"
+          value={this.state.startHashValue}
+          onChange={this.handleStartHashChange}
+          style={{width: "350px"}}
         />{"  "}
         <input type="submit" value="Start Bid" onClick={this.handleStart} />
         <hr />
@@ -98,13 +127,42 @@ class App extends React.Component {
           type="text"
           placeholder="Enter Domain to add a bid for"
           value={this.state.addValue}
-          onChange={this.handleAddChange}
-          style = {{width: "250px"}}
+          onChange={this.handleAddNameChange}
+          style={{width: "250px"}}
+        />{"  "}
+        <input
+          type="text"
+          placeholder="Enter bid commit hash"
+          value={this.state.addHashValue}
+          onChange={this.handleAddHashChange}
+          style={{width: "350px"}}
         />{"  "}
         <input type="submit" value="Add Bid" onClick={this.handleAdd} />
         <hr />
 
         <h2>Reveal Bid</h2>
+        <input
+          type="text"
+          placeholder="Enter Domain name to reveal bid for"
+          value={this.state.revealNameValue}
+          onChange={this.handleRevealNameChange}
+          style={{width: "250px"}}
+        />{"  "}
+          <input
+          type="text"
+          placeholder="Enter bid value"
+          value={this.state.revealBidValue}
+          onChange={this.handleRevealBidChange}
+          style={{width: "250px"}}
+        />{"  "}
+          <input
+          type="text"
+          placeholder="Enter commit secret value"
+          value={this.state.revealSaltValue}
+          onChange={this.handleRevealSaltChange}
+          style={{width: "250px"}}
+        />{"  "}
+        <input type="submit" value="Reveal Bid" onClick={this.handleReveal} />
         <hr />
 
         <h2>Claim Domain</h2>
