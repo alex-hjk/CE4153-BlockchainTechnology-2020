@@ -9,8 +9,8 @@ import RegistrarArtifact from "../build/contracts/Registrar.json";
 import BidderArtifact from"../build/contracts/Bidder.json"
 
 // Contract setup - to update after deployment
-export const RegistrarAddress = "0xB280Db02eFdb0c940926d7B92F9Fc24aBffaa9C2";
-export const BidderAddress = "";
+export const RegistrarAddress = "0x09f7Ed3E475972cd1d60C165439EfE1Cb6737532";
+export const BidderAddress = "0x0912d95628A24Ebdb410934aa886f56280bCB7C4";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;
@@ -38,7 +38,7 @@ const bidContract = new web3.eth.Contract(BidderArtifact.abi, BidderAddress);
 regContract.events.AddDomain()
 .on('data', function(event){
   console.log(event);
-  var {domainName, target, domainExpiry} = event.returnedValues;
+  var {domainName, target, domainExpiry} = event.returnValues;
   console.log(`Domain ${domainName} added. Owner: ${target}, Expiry: ${domainExpiry}.`);
 })
 .on('error', console.error);
@@ -46,7 +46,7 @@ regContract.events.AddDomain()
 regContract.events.RemoveDomain()
 .on('data', function(event){
   console.log(event);
-  var {domainName, target, domainExpiry} = event.returnedValues;
+  var {domainName, target, domainExpiry} = event.returnValues;
   console.log(`Domain ${domainName} deleted. Owner: ${target}, Expiry: ${domainExpiry}.`);
 })
 .on('error', console.error);
@@ -55,16 +55,16 @@ regContract.events.RemoveDomain()
 bidContract.events.StartBid()
 .on('data', function(event){
   console.log(event);
-  var {name, sender} = event.returnedValues;
-  console.log(`Bid for domain ${name} started by ${sender}.`);
+  var {domainName, sender} = event.returnValues;
+  console.log(`Bid for domain ${domainName} started by ${sender}.`);
 })
 .on('error', console.error);
 
 bidContract.events.ClaimDomain()
 .on('data', function(event){
   console.log(event);
-  var {name, sender} = event.returnedValues;
-  console.log(`Domain ${name} claimed by ${sender}.`);
+  var {domainName, sender} = event.returnValues;
+  console.log(`Domain ${domainName} claimed by ${sender}.`);
 })
 .on('error', console.error);
 
