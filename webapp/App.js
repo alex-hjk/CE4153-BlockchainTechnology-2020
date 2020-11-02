@@ -76,10 +76,11 @@ class App extends React.Component {
 
   // Handle refresh registered domain list
   handleRefresh = async () => {
+    this.state.registeredDomains = [];
     let addedDomains = await getRegisteredDomains();
     for (var i = 0; i < addedDomains.length; i++) {
-      var {domainName, target, domainExpiry} = addedDomains[i].returnValues;
-      this.state.registeredDomains.push({domainName, target, domainExpiry});
+      var {domainName, owner, expiry} = addedDomains[i].returnValues;
+      this.state.registeredDomains.push({domainName, owner, expiry});
     }
     console.log(this.state.registeredDomains);
   }
