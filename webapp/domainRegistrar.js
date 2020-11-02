@@ -38,12 +38,37 @@ export const querySpecificDomain = async (domainName) => {
   return { owner: domainOwner, expiry: domainExpiry };
 };
 
-export const startBid = async(domainName, amount, salt) => {
-  const commit = web3.utils.soliditySha3({t:'uint', v: amount}, {t:'string', v: salt});
+export const startBid = async(domainName, commit) => {
   if (!bidContract.methods.canStart(domainName).call()) {
     alert("Can not start bid");
     return
   }
   await bidContract.methods.startBid(domainName, commit).send({from: addr });
   return
+}
+
+export const addBid = async(domainName, commit) => {
+  if (!bidContract.methods.canAdd(domainName).call()) {
+    alert("Can not add bid");
+    return
+  }
+  await bidContract.methods.addBid(domainName, commit).send({from: addr });
+  return
+}
+
+export const revealBid = async(domainName, amount, salt) => {
+  if (!bidContract.methods.canRveal(domainName).call()) {
+    alert("Can not reveal bid");
+    return
+  }
+  await bidContract.methods.revealBid(domainName, amount, salt).send({from: addr });
+  return
+}
+
+export const claimDomain = async(domainName, targetAddress, value) => {
+  if (!bidContract.methods.canClaim(domainName).call()) {
+    alert("Can not claim domain");
+    return
+  }
+  await bidContract.methods.claimDomain(domainName, targetAddress).send({from: addr, value: value});
 }
