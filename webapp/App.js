@@ -14,11 +14,9 @@ class App extends React.Component {
     this.state = {
       queryInput: "",
       startNameInput: "",
-      startValueInput: "",
-      startSaltInput: "",
+      startHashInput: "",
       addNameInput: "",
-      addValueInput: "",
-      addSaltInput: "",
+      addHashInput: "",
       revealNameInput: "",
       revealValueInput: "",
       revealSaltInput: "",
@@ -59,28 +57,22 @@ class App extends React.Component {
   handleStartNameChange = (e) => {
     this.setState({ startNameInput: e.target.value });
   }
-  handleStartValueChange = (e) => {
-    this.setState({ startValueInput: e.target.value });
-  }
-  handleStartSaltChange = (e) => {
-    this.setState({ startSaltInput: e.target.value });
+  handleStartHashChange = (e) => {
+    this.setState({ startHashInput: e.target.value });
   }
   handleStart = async () => {
-    let result = await startBid(this.state.startNameInput, this.state.startValueInput);
+    let result = await startBid(this.state.startNameInput, this.state.startHashInput);
   }
 
   // Add bid functionality
   handleAddNameChange = (e) => {
     this.setState({ addNameInput: e.target.value });
   }
-  handleAddValueChange = (e) => {
-    this.setState({ addValueInput: e.target.value });
-  }
-  handleAddSaltChange = (e) => {
-    this.setState({ addSaltInput: e.target.value });
+  handleAddHashChange = (e) => {
+    this.setState({ addHashInput: e.target.value });
   }
   handleAdd = async () => {
-    let result = await addBid(this.state.addNameInput, this.state.addValueInput);
+    let result = await addBid(this.state.addNameInput, this.state.addHashInput);
   }
 
   // Reveal bid functionality
@@ -169,19 +161,12 @@ class App extends React.Component {
           onChange={this.handleStartNameChange}
           style={{width: "250px"}}
         />{"  "}
-        <input
+          <input
           type="text"
-          placeholder="Enter bid value"
-          value={this.state.startValueInput}
-          onChange={this.handleStartValueChange}
+          placeholder="Enter bid commit hash"
+          value={this.state.startHashValue}
+          onChange={this.handleStartHashChange}
           style={{width: "350px"}}
-        />{"  "}
-        <input
-          type="text"
-          placeholder="Enter commit secret value"
-          value={this.state.startSaltInput}
-          onChange={this.handleStartSaltChange}
-          style={{width: "250px"}}
         />{"  "}
         <input type="submit" value="Start Bid" onClick={this.handleStart} />
         <hr />
@@ -196,17 +181,10 @@ class App extends React.Component {
         />{"  "}
         <input
           type="text"
-          placeholder="Enter bid value"
-          value={this.state.addValueInput}
-          onChange={this.handleAddValueChange}
+          placeholder="Enter bid commit hash"
+          value={this.state.addHashValue}
+          onChange={this.handleAddHashChange}
           style={{width: "350px"}}
-        />{"  "}
-        <input
-          type="text"
-          placeholder="Enter commit secret value"
-          value={this.state.addSaltInput}
-          onChange={this.handleAddSaltChange}
-          style={{width: "250px"}}
         />{"  "}
         <input type="submit" value="Add Bid" onClick={this.handleAdd} />
         <hr />
