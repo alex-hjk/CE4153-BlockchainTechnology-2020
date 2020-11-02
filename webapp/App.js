@@ -21,12 +21,12 @@ class App extends React.Component {
     this.state = {
       registeredDomains: [],
       queryInput: "",
-      queryName: "ExampleDomain",
+      queryName: "",
       queryAddress: "0x0",
       queryExpiry: 0,
       queryOutput: "",
       bidQueryInput: "",
-      bidQueryName: "ExampleDomain",
+      bidQueryName: "",
       bidQueryCommitExpiry: "",
       bidQueryRevealExpiry: "",
       bidQueryClaimExpiry: "",
@@ -231,9 +231,14 @@ class App extends React.Component {
           style={{width: "250px"}}
         />{"  "}
         <input type="submit" value="Query Domain" onClick={this.handleQuery} />
-        <p>
-          Query result: Domain <b>{this.state.queryName}.ntu</b> resolves to {this.state.queryAddress} and expires at block number {this.state.queryExpiry}.
-        </p>
+        {this.state.queryName &&
+        <>
+          <p>
+            Query result: Domain <b>{this.state.queryName}.ntu</b> resolves to {this.state.queryAddress} and expires at block number {this.state.queryExpiry}.
+          </p>
+        </>
+        }
+
         <hr />
 
         <h2>Query Bid Status</h2>
@@ -245,17 +250,21 @@ class App extends React.Component {
           style={{width: "250px"}}
         />{"  "}
         <input type="submit" value="Query Bid" onClick={this.handleBidQuery} />
-        <p>
-          Query result for domain: <b>{this.state.bidQueryName}.ntu</b>
-        </p>
-        <ul>
-          <li>Commit expiry: {this.state.bidQueryCommitExpiry}</li>
-          <li>Reveal expiry: {this.state.bidQueryRevealExpiry}</li>
-          <li>Claim expiry: {this.state.bidQueryClaimExpiry}</li>
-          <li>Highest bid (wei): {this.state.bidQueryHighestBid}</li>
-          <li>Highest bidder: {this.state.bidQueryHighestBidder}</li>
-          <li>Bid is active: {String(this.state.bidQueryActive)}</li>
-        </ul>
+        {this.state.bidQueryName &&
+          <>
+            <p>
+              Query result for domain: <b>{this.state.bidQueryName}.ntu</b>
+            </p>
+            <ul>
+              <li>Commit expiry: {this.state.bidQueryCommitExpiry}</li>
+              <li>Reveal expiry: {this.state.bidQueryRevealExpiry}</li>
+              <li>Claim expiry: {this.state.bidQueryClaimExpiry}</li>
+              <li>Highest bid (wei): {this.state.bidQueryHighestBid}</li>
+              <li>Highest bidder: {this.state.bidQueryHighestBidder}</li>
+              <li>Bid is active: {String(this.state.bidQueryActive)}</li>
+            </ul>
+          </>
+        }
         <hr />
 
         <h2>Start New Bid</h2>
