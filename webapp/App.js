@@ -31,7 +31,7 @@ class App extends React.Component {
       address: "0x0",
       expiry: 0,
     };
-    
+
     // Bindings for inputs and buttons
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
@@ -85,7 +85,7 @@ class App extends React.Component {
   handleRevealSaltChange = (e) => {
     this.setState({ revealSaltInput: e.target.value });
   }
-  handleAdd = async () => {
+  handleReveal = async () => {
     let result = await revealBid(this.state.revealNameInput, this.state.revealBidInput, this.state.revealSaltInput);
   }
 
