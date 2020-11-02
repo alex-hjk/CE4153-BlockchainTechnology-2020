@@ -21,6 +21,7 @@ class App extends React.Component {
     this.state = {
       registeredDomains: [],
       queryInput: "",
+      queryName: "ExampleDomain",
       queryAddress: "0x0",
       queryExpiry: 0,
       queryOutput: "",
@@ -87,12 +88,12 @@ class App extends React.Component {
     this.setState({ queryInput: e.target.value });
   }
   handleQuery = async () => {
-    let result = await querySpecificDomain(this.state.queryInput);
+    let queryResult = await querySpecificDomain(this.state.queryInput);
     this.setState({
-      address: result.owner,
-      expiry: result.expiry,
+      queryName: this.state.queryInput,
+      queryAddress: queryResult.owner,
+      queryExpiry: queryResult.expiry,
     });
-    this.setState({ queryOutput: `Query Result: Domain ${this.state.queryInput} resolves to ${this.state.queryAddress} and expires at block number ${this.state.queryExpiry}.`});
   }
 
   // Start bid functionality
@@ -201,9 +202,9 @@ class App extends React.Component {
           onChange={this.handleQueryChange}
           style={{width: "250px"}}
         />{"  "}
-        <input type="submit" value="Query Deposit" onClick={this.handleQuery} />
+        <input type="submit" value="Query Domain" onClick={this.handleQuery} />
         <p>
-          {this.queryOutput}
+          Query result: Domain {this.state.queryName} resolves to {this.state.queryAddress} and expires at block number {this.state.queryExpiry}.
         </p>
         <hr />
 
