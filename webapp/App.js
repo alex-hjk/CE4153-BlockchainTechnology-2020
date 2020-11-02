@@ -3,6 +3,7 @@ import {
   RegistrarAddress,
   BidderAddress,
   Testnet,
+  getRegisteredDomains,
   querySpecificDomain,
   startBid,
   addBid,
@@ -18,6 +19,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      registeredDomains: [],
       queryInput: "",
       queryAddress: "0x0",
       queryExpiry: 0,
@@ -69,6 +71,15 @@ class App extends React.Component {
     this.handleGenerateBidChange = this.handleGenerateBidChange.bind(this);
     this.handleGenerateSaltChange = this.handleGenerateSaltChange.bind(this);
     this.handleGenerate = this.handleGenerate.bind(this);
+  }
+
+  // Handle refresh registered domain list
+  handleRefresh = async () => {
+    let addedDomains = await getRegisteredDomains();
+    for (var i = 0; i < addedDomains.length; i++) {
+      var {domainName, target, domainExpiry} = addedDomains[i].returnValues;
+      this.state.registeredDomains.push({domainName, target, domainExpiry});
+    }
   }
 
   // Query domain functionality
@@ -176,6 +187,10 @@ class App extends React.Component {
         <hr />
 
         <h2>Registered Domains</h2>
+        <p>
+          domainList
+        </p>
+        <input type="submit" value="Refresh" onClick={this.handleRefresh} />
         <hr />
 
         <h2>Query Domain</h2>

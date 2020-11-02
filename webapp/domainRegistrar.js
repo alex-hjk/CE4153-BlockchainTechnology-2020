@@ -68,6 +68,11 @@ bidContract.events.ClaimDomain()
 })
 .on('error', console.error);
 
+export const getRegisteredDomains = async() => {
+  let addedDomains = await regContract.getPastEvents('AddDomain');
+  return addedDomains;
+}
+
 export const querySpecificDomain = async (domainName) => {
   const {domainOwner, domainExpiry} = await regContract.methods.getSpecificDomainDetails(domainName).call();
   return { owner: domainOwner, expiry: domainExpiry };
