@@ -93,7 +93,7 @@ class App extends React.Component {
     let addedDomains = await getRegisteredDomains();
     for (var i = 0; i < addedDomains.length; i++) {
       var {domainName, owner, expiry} = addedDomains[i].returnValues;
-      registeredDomains.push(<p>Domain: {domainName} &emsp; Owner: {owner} &emsp; Expiry: {expiry}</p>);
+      registeredDomains.push(<p>Domain: <b>{domainName}.ntu</b> &emsp; Address: {owner} &emsp; Expiry: {expiry}</p>);
     }
     this.setState({
       registeredDomains: registeredDomains
