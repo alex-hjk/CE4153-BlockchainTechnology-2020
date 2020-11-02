@@ -80,6 +80,7 @@ class App extends React.Component {
       var {domainName, target, domainExpiry} = addedDomains[i].returnValues;
       this.state.registeredDomains.push({domainName, target, domainExpiry});
     }
+    console.log(this.state.registeredDomains);
   }
 
   // Query domain functionality
@@ -187,9 +188,7 @@ class App extends React.Component {
         <hr />
 
         <h2>Registered Domains</h2>
-        <p>
-          domainList
-        </p>
+        <label id="registeredDomains"></label>
         <input type="submit" value="Refresh" onClick={this.handleRefresh} />
         <hr />
 
