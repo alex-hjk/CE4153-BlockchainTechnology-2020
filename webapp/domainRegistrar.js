@@ -30,10 +30,10 @@ if (window.ethereum) {
 }
 
 // Set up contract objects
-const contract = new web3.eth.Contract(RegistrarArtifact.abi, RegistrarAddress);
-const contract = new web3.eth.Contract(BidderArtifact.abi, BidderAddress);
+const regContract = new web3.eth.Contract(RegistrarArtifact.abi, RegistrarAddress);
+const bidContract = new web3.eth.Contract(BidderArtifact.abi, BidderAddress);
 
 export const querySpecificDomain = async (domainName) => {
-  const {domainOwner, domainExpiry} = await contract.methods.getSpecificDomainDetails(domainName).call({ from: addr });
+  const {domainOwner, domainExpiry} = await regContract.methods.getSpecificDomainDetails(domainName).call({ from: addr });
   return { owner: domainOwner, expiry: domainExpiry };
 };

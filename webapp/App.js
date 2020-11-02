@@ -31,12 +31,19 @@ class App extends React.Component {
   };
 
   render() {
+    // Layout: Registered, Query, New, Add, Reveal, Claim, Send
     return (
       <>
         <h1>Welcome to Bitalik Sakamoto's Domain Registrar dApp</h1>
-        <p>Domain Registrar Contract Address: {RegistrarAddress}</p>
+        <p>Registrar Contract Address: {RegistrarAddress}</p>
+        <p>Bidder Contract Address: {BidderAddress}</p>
         <p>Network: {Testnet}</p>
         <hr />
+        
+        <h2>Registered Domains</h2>
+        <hr />
+
+        <h2>Query Domain</h2>
         <input
           type="text"
           placeholder="Enter Domain to query"
@@ -45,8 +52,23 @@ class App extends React.Component {
         />{" "}
         <input type="submit" value="Query Deposit" onClick={this.handleQuery} />
         <p>
-          Query Result: Domain {this.state.queryInput} belongs to {this.state.address} and expires at block number {this.state.expiry}.
+          Query Result: Domain {this.state.queryInput} resolves to {this.state.address} and expires at block number {this.state.expiry}.
         </p>
+        <hr />
+
+        <h2>Start New Bid</h2>
+        <hr />
+
+        <h2>Add Bid</h2>
+        <hr />
+
+        <h2>Reveal Bid</h2>
+        <hr />
+
+        <h2>Claim Domain</h2>
+        <hr />
+
+        <h2>Send Ether to Domain</h2>
         <hr />
       </>
     );
