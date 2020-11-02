@@ -92,7 +92,7 @@ export const addBid = async(domainName, commit) => {
 }
 
 export const revealBid = async(domainName, amount, salt) => {
-  if (!bidContract.methods.canRveal(domainName).call()) {
+  if (!bidContract.methods.canReveal(domainName).call()) {
     alert("Can not reveal bid");
     return
   }
