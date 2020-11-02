@@ -73,41 +73,44 @@ export const querySpecificDomain = async (domainName) => {
   return { owner: domainOwner, expiry: domainExpiry };
 };
 
+// Start bid, called only after validity check passes
 export const startBid = async(domainName, commit) => {
   if (!(await bidContract.methods.canStart(domainName).call())) {
-    alert("Can not start bid");
+    alert("Cannot start bid. Please check that the domain input is valid.");
     return
   }
   await bidContract.methods.startBid(domainName, commit).send({from: ethereum.selectedAddress});
   return
 }
 
+// Add bid, called only after validity check passes
 export const addBid = async(domainName, commit) => {
   if (!(await bidContract.methods.canAdd(domainName).call())) {
-    alert("Can not add bid");
+    alert("Cannot add bid. Please check that the domain input is valid.");
     return
   }
   await bidContract.methods.addBid(domainName, commit).send({from: ethereum.selectedAddress});
   return
 }
 
+// Reveal bid, called only after validity check passes
 export const revealBid = async(domainName, amount, salt) => {
   if (!(await bidContract.methods.canReveal(domainName).call())) {
-    alert("Can not reveal bid");
+    alert("Cannot reveal bid. Please check that the domain input is valid.");
     return
   }
   await bidContract.methods.revealBid(domainName, amount, salt).send({from: ethereum.selectedAddress});
   return
 }
 
-// Check with contract to see if domain name claim will be valid
-export const claimCheck = async(domainName) => {
-  return (bidContract.methods.canClaim(domainName).call());
-}
-
 // Claim domain, called only after validity check passes
 export const claimDomain = async(domainName, targetAddress, value) => {
+  if (!(await bidContract.methods.canClaim(domainName).call())) {
+    alert("Cannot claim domain. Please check that the domain input is valid.");
+    return
+  }
   await bidContract.methods.claimDomain(domainName, targetAddress).send({from: ethereum.selectedAddress, value: value});
+  return
 }
 
 export const updateBlockNumber = async() => {

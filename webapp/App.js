@@ -92,7 +92,7 @@ class App extends React.Component {
     this.setState({ startHashInput: e.target.value });
   }
   handleStart = async () => {
-    let result = await startBid(this.state.startNameInput, this.state.startHashInput);
+    let startResult = await startBid(this.state.startNameInput, this.state.startHashInput);
   }
 
   // Add bid functionality
@@ -103,7 +103,7 @@ class App extends React.Component {
     this.setState({ addHashInput: e.target.value });
   }
   handleAdd = async () => {
-    let result = await addBid(this.state.addNameInput, this.state.addHashInput);
+    let addResult = await addBid(this.state.addNameInput, this.state.addHashInput);
   }
 
   // Reveal bid functionality
@@ -117,7 +117,7 @@ class App extends React.Component {
     this.setState({ revealSaltInput: e.target.value });
   }
   handleReveal = async () => {
-    let result = await revealBid(this.state.revealNameInput, this.state.revealBidInput, this.state.revealSaltInput);
+    let revealResult = await revealBid(this.state.revealNameInput, this.state.revealBidInput, this.state.revealSaltInput);
   }
 
   // Claim domain functionality
@@ -131,12 +131,7 @@ class App extends React.Component {
     this.setState({ claimAddressInput: e.target.value });
   }
   handleClaim = async () => {
-    let claimStatus = await claimCheck(this.state.claimNameInput);
-    if (!claimStatus) {
-      alert("Cannot claim domain");
-    } else {
-      let result = await claimDomain(this.state.claimNameInput, this.state.claimAddressInput, this.state.claimValueInput);
-    }
+    let claimResult = await claimDomain(this.state.claimNameInput, this.state.claimAddressInput, this.state.claimValueInput);
   }
 
   // Send ether functionality
