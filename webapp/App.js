@@ -4,6 +4,10 @@ import {
   BidderAddress,
   Testnet,
   querySpecificDomain,
+  startBid,
+  addBid,
+  revealBid,
+  claimDomain,
   generateCommit,
   updateBlockNumber,
 } from "./domainRegistrar.js";
@@ -38,6 +42,28 @@ class App extends React.Component {
     // Bindings for inputs and buttons
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
+
+    this.handleStartNameChange = this.handleStartNameChange.bind(this);
+    this.handleStartHashChange = this.handleStartHashChange.bind(this);
+    this.handleStart = this.handleStart.bind(this);
+
+    this.handleAddNameChange = this.handleAddNameChange.bind(this);
+    this.handleAddHashChange = this.handleAddHashChange.bind(this);
+    this.handleAdd = this.handleAdd.bind(this);
+
+    this.handleRevealNameChange = this.handleRevealNameChange.bind(this);
+    this.handleRevealBidChange = this.handleRevealBidChange.bind(this);
+    this.handleRevealSaltChange = this.handleRevealSaltChange.bind(this);
+    this.handleReveal = this.handleReveal.bind(this);
+
+    this.handleClaimNameChange = this.handleClaimNameChange.bind(this);
+    this.handleClaimValueChange = this.handleClaimValueChange.bind(this);
+    this.handleClaimAddressChange = this.handleClaimAddressChange.bind(this);
+    this.handleClaim = this.handleClaim.bind(this);
+
+    this.handleSendNameChange = this.handleSendNameChange.bind(this);
+    this.handleSendValueChange = this.handleSendValueChange.bind(this);
+    this.handleSend = this.handleSend.bind(this);
 
     this.handleGenerateBidChange = this.handleGenerateBidChange.bind(this);
     this.handleGenerateSaltChange = this.handleGenerateSaltChange.bind(this);

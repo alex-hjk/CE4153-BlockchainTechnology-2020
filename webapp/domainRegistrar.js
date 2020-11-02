@@ -78,7 +78,7 @@ export const startBid = async(domainName, commit) => {
     alert("Can not start bid");
     return
   }
-  await bidContract.methods.startBid(domainName, commit).send({from: addr });
+  await bidContract.methods.startBid(domainName, commit).send({from: ethereum.selectedAddress});
   return
 }
 
@@ -87,7 +87,7 @@ export const addBid = async(domainName, commit) => {
     alert("Can not add bid");
     return
   }
-  await bidContract.methods.addBid(domainName, commit).send({from: addr });
+  await bidContract.methods.addBid(domainName, commit).send({from: ethereum.selectedAddress});
   return
 }
 
@@ -96,7 +96,7 @@ export const revealBid = async(domainName, amount, salt) => {
     alert("Can not reveal bid");
     return
   }
-  await bidContract.methods.revealBid(domainName, amount, salt).send({from: addr });
+  await bidContract.methods.revealBid(domainName, amount, salt).send({from: ethereum.selectedAddress});
   return
 }
 
@@ -105,7 +105,7 @@ export const claimDomain = async(domainName, targetAddress, value) => {
     alert("Can not claim domain");
     return
   }
-  await bidContract.methods.claimDomain(domainName, targetAddress).send({from: addr, value: value});
+  await bidContract.methods.claimDomain(domainName, targetAddress).send({from: ethereum.selectedAddress, value: value});
 }
 
 export const updateBlockNumber = async() => {
