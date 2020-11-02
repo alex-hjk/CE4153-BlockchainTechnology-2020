@@ -12,6 +12,7 @@ import {
   claimDomain,
   generateCommit,
   updateBlockNumber,
+  sendEther
 } from "./domainRegistrar.js";
 
 // example from doc: https://reactjs.org/docs/forms.html#controlled-components
@@ -22,9 +23,13 @@ class App extends React.Component {
       registeredDomains: [],
       queryInput: "",
       queryName: "",
-      queryAddress: "0x0",
-      queryExpiry: 0,
+      queryAddress: "",
+      queryExpiry: "",
       queryOutput: "",
+      reverseQueryInput: "",
+      reverseQueryAddress: "",
+      reverseQueryName: "",
+      reverseQueryExpiry: "",
       bidQueryInput: "",
       bidQueryName: "",
       bidQueryCommitExpiry: "",
@@ -56,6 +61,9 @@ class App extends React.Component {
 
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
+
+    this.handleReverseQueryChange = this.handleReverseQueryChange.bind(this);
+    this.handleReverseQuery = this.handleReverseQuery.bind(this);
 
     this.handleBidQueryChange = this.handleBidQueryChange.bind(this);
     this.handleBidQuery = this.handleBidQuery.bind(this);
@@ -113,22 +121,35 @@ class App extends React.Component {
     });
   }
 
-    // Query bidding info functionality
-    handleBidQueryChange = (e) => {
-      this.setState({ bidQueryInput: e.target.value });
-    }
-    handleBidQuery = async () => {
-      let bidQueryResult = await queryBid(this.state.bidQueryInput);
-      this.setState({
-        bidQueryName: this.state.bidQueryInput,
-        bidQueryCommitExpiry: bidQueryResult.commit,
-        bidQueryRevealExpiry: bidQueryResult.reveal,
-        bidQueryClaimExpiry: bidQueryResult.claim,
-        bidQueryHighestBid: bidQueryResult.bid,
-        bidQueryHighestBidder: bidQueryResult.bidder,
-        bidQueryActive: bidQueryResult.status,
-      });
-    }
+  // Reverse lookup query functionality
+  handleReverseQueryChange = (e) => {
+    this.setState({ reverseQueryInput: e.target.value });
+  }
+  handleReverseQuery = async () => {
+    let reverseQueryResult = await queryAddress(this.state.reverseQueryInput);    // TODO: Add queryAddress function
+    this.setState({
+      reverseQueryAddress: this.state.reverseQueryInput,
+      reverseQueryName: reverseQueryResult.name,
+      reverseQueryExpiry: reverseQueryResult.expiry,
+    });
+  }
+
+  // Query bidding info functionality
+  handleBidQueryChange = (e) => {
+    this.setState({ bidQueryInput: e.target.value });
+  }
+  handleBidQuery = async () => {
+    let bidQueryResult = await queryBid(this.state.bidQueryInput);
+    this.setState({
+      bidQueryName: this.state.bidQueryInput,
+      bidQueryCommitExpiry: bidQueryResult.commit,
+      bidQueryRevealExpiry: bidQueryResult.reveal,
+      bidQueryClaimExpiry: bidQueryResult.claim,
+      bidQueryHighestBid: bidQueryResult.bid,
+      bidQueryHighestBidder: bidQueryResult.bidder,
+      bidQueryActive: bidQueryResult.status,
+    });
+  }
 
   // Start bid functionality
   handleStartNameChange = (e) => {
@@ -242,7 +263,24 @@ class App extends React.Component {
           </p>
         </>
         }
+        <hr />
 
+        <h2>Query Address (Reverse Lookup)</h2>
+        <input
+          type="text"
+          placeholder="Enter Address to query"
+          value={this.state.reverseQueryValue}
+          onChange={this.handleReverseQueryChange}
+          style={{width: "250px"}}
+        />{"  "}
+        <input type="submit" value="Query Address" onClick={this.handleReverseQuery} />
+        {this.state.reverseQueryAddress &&
+        <>
+          <p>
+            Query result: Address {this.state.reverseQueryAddress} resolves to <b>{this.state.reverseQueryName}.ntu</b> and expires at block number {this.state.reverseQueryExpiry}.
+          </p>
+        </>
+        }
         <hr />
 
         <h2>Query Bid Status</h2>
