@@ -52,6 +52,8 @@ class App extends React.Component {
     };
 
     // Bindings for inputs and buttons
+    this.handleRefresh = this.handleRefresh.bind(this);
+
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
 
@@ -87,13 +89,15 @@ class App extends React.Component {
 
   // Handle refresh registered domain list
   handleRefresh = async () => {
-    this.state.registeredDomains = [];
+    let registeredDomains = [];
     let addedDomains = await getRegisteredDomains();
     for (var i = 0; i < addedDomains.length; i++) {
       var {domainName, owner, expiry} = addedDomains[i].returnValues;
-      this.state.registeredDomains.push({domainName, owner, expiry});
+      registeredDomains.push(<p>Domain: {domainName} &emsp; Owner: {owner} &emsp; Expiry: {expiry}</p>);
     }
-    console.log(this.state.registeredDomains);
+    this.setState({
+      registeredDomains: registeredDomains
+    });
   }
 
   // Query domain functionality
@@ -218,8 +222,8 @@ class App extends React.Component {
         <hr />
 
         <h2>Registered Domains</h2>
-        <label id="registeredDomains"></label>
         <input type="submit" value="Refresh" onClick={this.handleRefresh} />
+        {this.state.registeredDomains}
         <hr />
 
         <h2>Query Domain Registration</h2>
