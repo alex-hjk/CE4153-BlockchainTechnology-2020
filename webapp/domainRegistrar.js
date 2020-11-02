@@ -70,6 +70,7 @@ bidContract.events.ClaimDomain()
 
 export const getRegisteredDomains = async() => {
   let addedDomains = await regContract.getPastEvents('AddDomain');
+  console.log(`within domainregistrar.js, ${addedDomains}`);
   return addedDomains;
 }
 
