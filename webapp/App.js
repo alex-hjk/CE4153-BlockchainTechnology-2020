@@ -26,7 +26,7 @@ class App extends React.Component {
       queryExpiry: 0,
       queryOutput: "",
       bidQueryInput: "",
-      bidQueryName: "",
+      bidQueryName: "ExampleDomain",
       bidQueryCommitExpiry: "",
       bidQueryRevealExpiry: "",
       bidQueryClaimExpiry: "",
@@ -209,7 +209,7 @@ class App extends React.Component {
     // Layout: Registered, Query Domain, Query Bid, New, Add, Reveal, Claim, Send, Generate
     return (
       <>
-        <h1>Welcome to Bitalik Sakamoto's Domain Registrar dApp</h1>
+        <h1>Bitalik Sakamoto's .ntu Domain Registrar</h1>
         <p>Registrar Contract Address: {RegistrarAddress}</p>
         <p>Bidder Contract Address: {BidderAddress}</p>
         <p>Network: {Testnet}</p>
@@ -232,7 +232,7 @@ class App extends React.Component {
         />{"  "}
         <input type="submit" value="Query Domain" onClick={this.handleQuery} />
         <p>
-          Query result: Domain {this.state.queryName} resolves to {this.state.queryAddress} and expires at block number {this.state.queryExpiry}.
+          Query result: Domain <b>{this.state.queryName}.ntu</b> resolves to {this.state.queryAddress} and expires at block number {this.state.queryExpiry}.
         </p>
         <hr />
 
@@ -246,7 +246,7 @@ class App extends React.Component {
         />{"  "}
         <input type="submit" value="Query Bid" onClick={this.handleBidQuery} />
         <p>
-          Query result for domain: {this.state.bidQueryName}
+          Query result for domain: <b>{this.state.bidQueryName}.ntu</b>
         </p>
         <ul>
           <li>Commit expiry: {this.state.bidQueryCommitExpiry}</li>
