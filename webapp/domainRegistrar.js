@@ -7,10 +7,11 @@ import Web3 from "web3";
 // Import compiled contract artifacts for function interaction
 import RegistrarArtifact from "../build/contracts/Registrar.json";
 import BidderArtifact from"../build/contracts/Bidder.json"
+import { isAddress } from "web3-utils";
 
 // Contract setup - to update after deployment
-export const RegistrarAddress = "0x1084D88bfD5439bDb6E5ad7D1663fA1DfcB6b3ed";
-export const BidderAddress = "0xB0FCA77E17f3a03Fa57F0f91c1D997395B97f85F";
+export const RegistrarAddress = "0x09f7Ed3E475972cd1d60C165439EfE1Cb6737532";
+export const BidderAddress = "0x0912d95628A24Ebdb410934aa886f56280bCB7C4";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;
@@ -119,6 +120,28 @@ export const claimDomain = async(domainName, targetAddress, value) => {
   }
   await bidContract.methods.claimDomain(domainName, targetAddress).send({from: ethereum.selectedAddress, value: value});
   return
+}
+
+// Send ether to domain
+export const sendEther = async(domainName, value) => {
+  let domainOwner = await regContract.methods.getOwner(domainName).call();
+  if (domainOwner == 0x0){
+    alert("Cannot send ether to domain. Domain might not be registered or may have expired.");
+    return
+  }
+  web3.eth.sendTransaction({
+    from: ethereum.selectedAddress, to: domainOwner, value: value
+  })
+  .on('transactionHash', function(hash){
+    console.log(`Transaction sent with hash ${hash}`);
+  })
+  .on('receipt', function(receipt){
+    console.log(`Transaction receipt: ${receipt}`);
+  })
+  .on('confirmation', function(confirmationNumber, receipt){
+    console.log(`${confirmationNumber} confirms, receipt: ${receipt}`);
+  })
+  .on('error', console.error);
 }
 
 export const updateBlockNumber = async() => {
