@@ -78,7 +78,6 @@ export const querySpecificDomain = async (domainName) => {
 // Query bidding information
 export const queryBid = async (domainName) => {
   const {commitExp, revealExp, claimExp, highBid, highBidder, active} = await bidContract.methods.getBiddingInfo(domainName).call();
-  console.log(await bidContract.methods.getBiddingInfo(domainName).call());
   return { commit: commitExp, reveal: revealExp, claim: claimExp, bid: highBid, bidder: highBidder, status: active };
 };
 
