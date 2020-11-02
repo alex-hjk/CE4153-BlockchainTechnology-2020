@@ -9,8 +9,8 @@ import RegistrarArtifact from "../build/contracts/Registrar.json";
 import BidderArtifact from"../build/contracts/Bidder.json"
 
 // Contract setup - to update after deployment
-export const RegistrarAddress = "0xB280Db02eFdb0c940926d7B92F9Fc24aBffaa9C2";
-export const BidderAddress = "";
+export const RegistrarAddress = "0xCc7F7dD177298b12822EB32a6edbE26579569507";
+export const BidderAddress = "0x5583CE21D021abE054D9CAFf6B947c7AeB7270e9";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;
