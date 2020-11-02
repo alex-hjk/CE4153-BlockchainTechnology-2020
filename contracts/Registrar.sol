@@ -20,8 +20,15 @@ contract Registrar is Ownable {
     
     // ******** Events ********
 
-    // Indexed parameters can be used for reverse lookup by filtering through historical events
+    // Indexed address can be used for reverse lookup by filtering through historical events
     event AddDomain(
+        string domainName,
+        address indexed owner,
+        uint expiry
+    );
+
+    // Also emit domain removals to cross-check against domain adding events, using expiry as unique identifier
+    event RemoveDomain(
         string domainName,
         address indexed owner,
         uint expiry
@@ -50,13 +57,17 @@ contract Registrar is Ownable {
         d.domainOwner = _target;
         d.domainExpiry = block.number + defaultDomainExpiry;
 
-        // Emit event to log domain name and owner address
+        // Emit event to log registered domain details
         emit AddDomain(_name, _target, d.domainExpiry);
     }
 
     // Remove domain from registrar
     function removeDomain(string memory _name) external {
         require(isOwner() || msg.sender == _bidder);        // only owner or bidder contract can delete domains
+        
+        // Emit event to log domain removal
+        emit RemoveDomain(_name, domains[_name].domainOwner, domains[_name].domainExpiry);
+        
         delete domains[_name];
     }
     
