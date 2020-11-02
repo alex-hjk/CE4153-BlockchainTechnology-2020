@@ -108,6 +108,11 @@ export const claimDomain = async(domainName, targetAddress, value) => {
   await bidContract.methods.claimDomain(domainName, targetAddress).send({from: addr, value: value});
 }
 
+export const updateBlockNumber = async() => {
+  const blockNum = regContract.methods.currentBlock().call();
+  return blockNum;
+}
+
 export const generateCommit = async(amount, salt) => {
   const commit = web3.utils.soliditySha3({t:'uint', v: amount}, {t:'string', v: salt});
   return commit;
