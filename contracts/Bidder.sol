@@ -231,6 +231,33 @@ contract Bidder is Ownable {
     function getClaimLength() public view returns(uint) {
         return claimLength;
     }
+    
+    // Check whether correct phase to proceed with new bid
+    function canStart(string memory _name) public view returns(bool) {
+        if (bids[_name].active) {
+            return (block.number > bids[_name].claimExpiry);
+        } else return true;
+    }
+
+    // Check whether correct phase to proceed with adding bid
+    function canAdd(string memory _name) public view returns(bool) {
+        return (bids[_name].active
+        && block.number <= bids[_name].commitExpiry);
+    }
+
+    // Check whether correct phase to proceed with revealing bid
+    function canReveal(string memory _name) public view returns(bool) {
+        return (bids[_name].active
+        && block.number > bids[_name].commitExpiry
+        && block.number <= bids[_name].revealExpiry);
+    }
+
+    // Check whether correct phase to proceed with claiming domain
+    function canClaim(string memory _name) public view returns(bool) {
+        return (bids[_name].active
+        && block.number > bids[_name].revealExpiry
+        && block.number <= bids[_name].claimExpiry);
+    }
 
     // Returns current block number
     function currentBlock() public view returns(uint) {
