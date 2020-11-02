@@ -37,7 +37,6 @@ const bidContract = new web3.eth.Contract(BidderArtifact.abi, BidderAddress);
 // Registrar Listeners
 regContract.events.AddDomain()
 .on('data', function(event){
-  console.log(event);
   var {domainName, target, domainExpiry} = event.returnValues;
   console.log(`Domain ${domainName} added. Owner: ${target}, Expiry: ${domainExpiry}.`);
 })
@@ -45,7 +44,6 @@ regContract.events.AddDomain()
 
 regContract.events.RemoveDomain()
 .on('data', function(event){
-  console.log(event);
   var {domainName, target, domainExpiry} = event.returnValues;
   console.log(`Domain ${domainName} deleted. Owner: ${target}, Expiry: ${domainExpiry}.`);
 })
@@ -54,7 +52,6 @@ regContract.events.RemoveDomain()
 // Bidder Listeners
 bidContract.events.StartBid()
 .on('data', function(event){
-  console.log(event);
   var {domainName, sender} = event.returnValues;
   console.log(`Bid for domain ${domainName} started by ${sender}.`);
 })
@@ -62,14 +59,13 @@ bidContract.events.StartBid()
 
 bidContract.events.ClaimDomain()
 .on('data', function(event){
-  console.log(event);
   var {domainName, sender} = event.returnValues;
   console.log(`Domain ${domainName} claimed by ${sender}.`);
 })
 .on('error', console.error);
 
 export const getRegisteredDomains = async() => {
-  let addedDomains = await regContract.getPastEvents('AddDomain');
+  let addedDomains = await regContract.getPastEvents("AddDomain", { fromBlock: 1});
   return addedDomains;
 }
 
