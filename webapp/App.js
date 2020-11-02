@@ -13,6 +13,9 @@ class App extends React.Component {
     super(props);
     this.state = {
       queryInput: "",
+      queryAddress: "0x0",
+      queryExpiry: 0,
+      queryOutput: "",
       startNameInput: "",
       startHashInput: "",
       addNameInput: "",
@@ -28,8 +31,6 @@ class App extends React.Component {
       generateBidInput: "",
       generateSaltInput: "",
       generateSaltOutput: "",
-      address: "0x0",
-      expiry: 0,
     };
 
     // Bindings for inputs and buttons
@@ -51,6 +52,7 @@ class App extends React.Component {
       address: result.owner,
       expiry: result.expiry,
     });
+    this.setState({ queryOutput: `Query Result: Domain ${this.state.queryInput} resolves to ${this.state.queryAddress} and expires at block number ${this.state.queryExpiry}.`});
   }
 
   // Start bid functionality
@@ -149,7 +151,7 @@ class App extends React.Component {
         />{"  "}
         <input type="submit" value="Query Deposit" onClick={this.handleQuery} />
         <p>
-          Query Result: Domain {this.state.queryInput} resolves to {this.state.address} and expires at block number {this.state.expiry}.
+          {this.queryOutput}
         </p>
         <hr />
 
