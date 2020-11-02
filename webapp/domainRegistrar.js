@@ -10,7 +10,7 @@ import BidderArtifact from"../build/contracts/Bidder.json"
 
 // Contract setup - to update after deployment
 export const RegistrarAddress = "0x0581BFA087dF1c392372484036E8338f2219b53d";
-export const BidderAddress = "0xCf6Ee3Ed0f1C18f6347a2F39a272b9043990e773";
+export const BidderAddress = "0xB0FCA77E17f3a03Fa57F0f91c1D997395B97f85F";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;
@@ -69,9 +69,17 @@ export const getRegisteredDomains = async() => {
   return addedDomains;
 }
 
+// Query domain registration information
 export const querySpecificDomain = async (domainName) => {
   const {domainOwner, domainExpiry} = await regContract.methods.getSpecificDomainDetails(domainName).call();
   return { owner: domainOwner, expiry: domainExpiry };
+};
+
+// Query bidding information
+export const queryBid = async (domainName) => {
+  const {commitExp, revealExp, claimExp, highBid, highBidder, active} = await bidContract.methods.getBiddingInfo(domainName).call();
+  console.log(await bidContract.methods.getBiddingInfo(domainName).call());
+  return { commit: commitExp, reveal: revealExp, claim: claimExp, bid: highBid, bidder: highBidder, status: active };
 };
 
 // Start bid, called only after validity check passes

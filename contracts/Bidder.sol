@@ -231,6 +231,16 @@ contract Bidder is Ownable {
     function getClaimLength() public view returns(uint) {
         return claimLength;
     }
+
+    // Returns bidding information
+    function getBiddingInfo(string memory _name) public view returns(uint commitExp, uint revealExp, uint claimExp, uint highBid, address highBidder, bool active) {
+        commitExp = bids[_name].commitExpiry;
+        revealExp = bids[_name].revealExpiry;
+        claimExp = bids[_name].claimExpiry;
+        highBid = bids[_name].highestBid;
+        highBidder = bids[_name].highestBidder;
+        active = bids[_name].active;
+    }
     
     // Check whether correct phase to proceed with new bid
     function canStart(string memory _name) public view returns(bool) {

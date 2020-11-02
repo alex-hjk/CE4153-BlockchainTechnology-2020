@@ -5,13 +5,13 @@ import {
   Testnet,
   getRegisteredDomains,
   querySpecificDomain,
+  queryBid,
   startBid,
   addBid,
   revealBid,
   claimDomain,
   generateCommit,
   updateBlockNumber,
-  claimCheck,
 } from "./domainRegistrar.js";
 
 // example from doc: https://reactjs.org/docs/forms.html#controlled-components
@@ -25,6 +25,14 @@ class App extends React.Component {
       queryAddress: "0x0",
       queryExpiry: 0,
       queryOutput: "",
+      bidQueryInput: "",
+      bidQueryName: "",
+      bidQueryCommitExpiry: "",
+      bidQueryRevealExpiry: "",
+      bidQueryClaimExpiry: "",
+      bidQueryHighestBid: "",
+      bidQueryHighestBidder: "",
+      bidQueryActive: false,
       startNameInput: "",
       startHashInput: "",
       addNameInput: "",
@@ -46,6 +54,9 @@ class App extends React.Component {
     // Bindings for inputs and buttons
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
+
+    this.handleBidQueryChange = this.handleBidQueryChange.bind(this);
+    this.handleBidQuery = this.handleBidQuery.bind(this);
 
     this.handleStartNameChange = this.handleStartNameChange.bind(this);
     this.handleStartHashChange = this.handleStartHashChange.bind(this);
@@ -97,6 +108,23 @@ class App extends React.Component {
       queryExpiry: queryResult.expiry,
     });
   }
+
+    // Query bidding info functionality
+    handleBidQueryChange = (e) => {
+      this.setState({ bidQueryInput: e.target.value });
+    }
+    handleBidQuery = async () => {
+      let bidQueryResult = await queryBid(this.state.bidQueryInput);
+      this.setState({
+        bidQueryName: this.state.bidQueryInput,
+        bidQueryCommitExpiry: bidQueryResult.commit,
+        bidQueryRevealExpiry: bidQueryResult.reveal,
+        bidQueryClaimExpiry: bidQueryResult.claim,
+        bidQueryHighestBid: bidQueryResult.bid,
+        bidQueryHighestBidder: bidQueryResult.bidder,
+        bidQueryActive: bidQueryResult.status,
+      });
+    }
 
   // Start bid functionality
   handleStartNameChange = (e) => {
@@ -178,7 +206,7 @@ class App extends React.Component {
   }
 
   render() {
-    // Layout: Registered, Query, New, Add, Reveal, Claim, Send, Generate
+    // Layout: Registered, Query Domain, Query Bid, New, Add, Reveal, Claim, Send, Generate
     return (
       <>
         <h1>Welcome to Bitalik Sakamoto's Domain Registrar dApp</h1>
@@ -194,11 +222,11 @@ class App extends React.Component {
         <input type="submit" value="Refresh" onClick={this.handleRefresh} />
         <hr />
 
-        <h2>Query Domain</h2>
+        <h2>Query Domain Registration</h2>
         <input
           type="text"
           placeholder="Enter Domain to query"
-          value={this.state.value}
+          value={this.state.queryValue}
           onChange={this.handleQueryChange}
           style={{width: "250px"}}
         />{"  "}
@@ -206,6 +234,28 @@ class App extends React.Component {
         <p>
           Query result: Domain {this.state.queryName} resolves to {this.state.queryAddress} and expires at block number {this.state.queryExpiry}.
         </p>
+        <hr />
+
+        <h2>Query Bid Status</h2>
+        <input
+          type="text"
+          placeholder="Enter Domain to query"
+          value={this.state.bidQueryValue}
+          onChange={this.handleBidQueryChange}
+          style={{width: "250px"}}
+        />{"  "}
+        <input type="submit" value="Query Bid" onClick={this.handleBidQuery} />
+        <p>
+          Query result for domain: {this.state.bidQueryName}
+        </p>
+        <ul>
+          <li>Commit expiry: {this.state.bidQueryCommitExpiry}</li>
+          <li>Reveal expiry: {this.state.bidQueryRevealExpiry}</li>
+          <li>Claim expiry: {this.state.bidQueryClaimExpiry}</li>
+          <li>Highest bid (wei): {this.state.bidQueryHighestBid}</li>
+          <li>Highest bidder: {this.state.bidQueryHighestBidder}</li>
+          <li>Bid is active: {String(this.state.bidQueryActive)}</li>
+        </ul>
         <hr />
 
         <h2>Start New Bid</h2>
