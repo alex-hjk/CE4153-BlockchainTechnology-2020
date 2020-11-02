@@ -74,7 +74,7 @@ export const querySpecificDomain = async (domainName) => {
 };
 
 export const startBid = async(domainName, commit) => {
-  if (!bidContract.methods.canStart(domainName).call()) {
+  if (!(await bidContract.methods.canStart(domainName).call())) {
     alert("Can not start bid");
     return
   }
@@ -83,7 +83,7 @@ export const startBid = async(domainName, commit) => {
 }
 
 export const addBid = async(domainName, commit) => {
-  if (!bidContract.methods.canAdd(domainName).call()) {
+  if (!(await bidContract.methods.canAdd(domainName).call())) {
     alert("Can not add bid");
     return
   }
@@ -92,7 +92,7 @@ export const addBid = async(domainName, commit) => {
 }
 
 export const revealBid = async(domainName, amount, salt) => {
-  if (!bidContract.methods.canReveal(domainName).call()) {
+  if (!(await bidContract.methods.canReveal(domainName).call())) {
     alert("Can not reveal bid");
     return
   }
