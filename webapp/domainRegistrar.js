@@ -34,6 +34,16 @@ const regContract = new web3.eth.Contract(RegistrarArtifact.abi, RegistrarAddres
 const bidContract = new web3.eth.Contract(BidderArtifact.abi, BidderAddress);
 
 export const querySpecificDomain = async (domainName) => {
-  const {domainOwner, domainExpiry} = await regContract.methods.getSpecificDomainDetails(domainName).call({ from: addr });
+  const {domainOwner, domainExpiry} = await regContract.methods.getSpecificDomainDetails(domainName).call();
   return { owner: domainOwner, expiry: domainExpiry };
 };
+
+export const startBid = async(domainName, amount, salt) => {
+  const commit = web3.utils.soliditySha3({t:'uint', v: amount}, {t:'string', v: salt});
+  if (!bidContract.methods.canStart(domainName).call()) {
+    alert("Can not start bid");
+    return
+  }
+  await bidContract.methods.startBid(domainName, commit).send({from: addr });
+  return
+}
