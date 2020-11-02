@@ -13,6 +13,12 @@ class App extends React.Component {
     this.state = {
       queryInput: "",
       startInput: "",
+      addInput: "",
+      revealNameInput: "",
+      revealValueInput: "",
+      revealSaltInput: "",
+      claimInput: "",
+      sendInput: "",
       address: "0x0",
       expiry: 0,
     };
@@ -21,10 +27,10 @@ class App extends React.Component {
     this.handleQuery = this.handleQuery.bind(this);
   }
 
+  // Query domain functionality
   handleQueryChange = (e) => {
     this.setState({ queryInput: e.target.value });
   }
-
   handleQuery = async () => {
     let result = await querySpecificDomain(this.state.queryInput);
     this.setState({
@@ -32,14 +38,22 @@ class App extends React.Component {
       expiry: result.expiry,
     });
   }
-
+  
+  // Start bid functionality
   handleStartChange = (e) => {
     this.setState({ startInput: e.target.value });
   }
-
   handleStart = async () => {
     let result = await startBid(this.state.startInput);
   }
+
+    // Add bid functionality
+    handleAddChange = (e) => {
+      this.setState({ addInput: e.target.value });
+    }
+    handleAdd = async () => {
+      let result = await startBid(this.state.addInput);
+    }
 
   render() {
     // Layout: Registered, Query, New, Add, Reveal, Claim, Send
@@ -60,6 +74,7 @@ class App extends React.Component {
           placeholder="Enter Domain to query"
           value={this.state.value}
           onChange={this.handleQueryChange}
+          style = {{width: "250px"}}
         />{"  "}
         <input type="submit" value="Query Deposit" onClick={this.handleQuery} />
         <p>
@@ -70,14 +85,23 @@ class App extends React.Component {
         <h2>Start New Bid</h2>
         <input
           type="text"
-          placeholder="Enter Domain to bid for"
+          placeholder="Enter Domain to start a bid for"
           value={this.state.startValue}
           onChange={this.handleStartChange}
+          style = {{width: "250px"}}
         />{"  "}
         <input type="submit" value="Start Bid" onClick={this.handleStart} />
         <hr />
 
         <h2>Add Bid</h2>
+        <input
+          type="text"
+          placeholder="Enter Domain to add a bid for"
+          value={this.state.addValue}
+          onChange={this.handleAddChange}
+          style = {{width: "250px"}}
+        />{"  "}
+        <input type="submit" value="Add Bid" onClick={this.handleAdd} />
         <hr />
 
         <h2>Reveal Bid</h2>
