@@ -1,6 +1,7 @@
 import React from "react";
 import {
   querySpecificDomain,
+  generateCommit,
   RegistrarAddress,
   BidderAddress,
   Testnet,
@@ -22,12 +23,18 @@ class App extends React.Component {
       claimNameInput: "",
       claimValueInput: "",
       claimAddressInput: "",
+      generateBidInput: "",
+      generateSaltInput: "",
+      generateSaltOutput: "",
       address: "0x0",
       expiry: 0,
     };
 
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
+    this.handleGenerateBidChange = this.handleGenerateBidChange.bind(this);
+    this.handleGenerateSaltChange = this.handleGenerateSaltChange.bind(this);
+    this.handleGenerate = this.handleGenerate.bind(this);
   }
 
   // Query domain functionality
@@ -82,7 +89,6 @@ class App extends React.Component {
   handleClaimNameChange = (e) => {
     this.setState({ claimNameInput: e.target.value });
   }
-
   handleClaimValueChange = (e) => {
     this.setState({ claimValueInput: e.target.value });
   }
@@ -92,6 +98,19 @@ class App extends React.Component {
   }
   handleClaim = async () => {
     let result = await claimDomain(this.state.claimNameInput, this.state.claimAddressInput, this.state.claimValueInput);
+  }
+
+  // Generate bid commit hash functionality
+  handleGenerateBidChange = (e) => {
+    this.setState({ generateBidInput: e.target.value });
+  }
+  handleGenerateSaltChange = (e) => {
+    this.setState({ generateSaltInput: e.target.value });
+  }
+  handleGenerate = async () => {
+    let generateResult = await generateCommit(this.state.generateBidInput, this.state.generateSaltInput);
+    console.log(generateResult);
+    this.setState({ generateSaltOutput: generateResult})
   }
 
   render() {
@@ -206,6 +225,26 @@ class App extends React.Component {
         />{"  "}
         <input type="submit" value="Claim Domain" onClick={this.handleClaim} />
         <hr />
+
+        <h2>Generate Bid Commit</h2>
+        <input
+          type="text"
+          placeholder="Enter bid amount value (wei)"
+          value={this.state.generateBidInput}
+          onChange={this.handleGenerateBidChange}
+          style={{width: "250px"}}
+        />{"  "}
+          <input
+          type="text"
+          placeholder="Enter commit secret value"
+          value={this.state.generateSaltInput}
+          onChange={this.handleGenerateSaltChange}
+          style={{width: "250px"}}
+        />{"  "}
+        <input type="submit" value="Generate Bid Commit" onClick={this.handleGenerate} />
+        <p>
+          Generated bid commit hash: {this.state.generateSaltOutput}
+        </p>
 
         <h2>Send Ether to Domain</h2>
         <hr />
