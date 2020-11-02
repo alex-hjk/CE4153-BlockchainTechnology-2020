@@ -4,12 +4,12 @@ import { useState, useRef, useEffect } from "react";
 import Web3 from "web3";
 
 // importing a compiled contract artifact which contains function signature etc. to interact
-import registrarArtifact from "../build/contracts/Registrar.json";
-import bidderArtifact from"../build/contracts/Bidder.json"
+import RegistrarArtifact from "../build/contracts/Registrar.json";
+import BidderArtifact from"../build/contracts/Bidder.json"
 
 // Contract setup - to update after deployment
-export const registrarAddress = "0xB280Db02eFdb0c940926d7B92F9Fc24aBffaa9C2";
-export const bidderAddress = "";
+export const RegistrarAddress = "0xB280Db02eFdb0c940926d7B92F9Fc24aBffaa9C2";
+export const BidderAddress = "";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`; // PLEASE CHANGE IT TO YOURS
@@ -29,8 +29,8 @@ if (window.ethereum) {
 }
 
 // Set up contract objects
-const contract = new web3.eth.Contract(registrarArtifact.abi, registrarAddress);
-const contract = new web3.eth.Contract(bidderArtifact.abi, bidderAddress);
+const contract = new web3.eth.Contract(RegistrarArtifact.abi, RegistrarAddress);
+const contract = new web3.eth.Contract(BidderArtifact.abi, BidderAddress);
 
 export const querySpecificDomain = async (domainName) => {
   // doc here: https://web3js.readthedocs.io/en/v1.2.11/web3-eth-contract.html#methods-mymethod-call

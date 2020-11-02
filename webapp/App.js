@@ -1,7 +1,8 @@
 import React from "react";
 import {
   querySpecificDomain,
-  DomainRegistrarAddress,
+  RegistrarAddress,
+  BidderAddress,
   Testnet,
 } from "./domainRegistrar.js";
 
@@ -33,7 +34,7 @@ class App extends React.Component {
     return (
       <>
         <h1>Welcome to Bitalik Sakamoto's Domain Registrar dApp</h1>
-        <p>Domain Registrar Contract Address: {DomainRegistrarAddress}</p>
+        <p>Domain Registrar Contract Address: {RegistrarAddress}</p>
         <p>Network: {Testnet}</p>
         <hr />
         <input
