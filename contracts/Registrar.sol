@@ -22,7 +22,7 @@ contract Registrar is Ownable {
 
     // Indexed address can be used for reverse lookup by filtering through historical events
     event AddDomain(
-        string domainName,
+        string indexed domainName,
         address indexed owner,
         uint expiry
     );
@@ -83,9 +83,14 @@ contract Registrar is Ownable {
         return domains[_name].domainExpiry;
     }
     
-    // Gets domain owner - name resolution service
+    // Gets domain owner - name resolution service, returning the zero address if resolution fails
     function getOwner(string memory _name) public view returns(address) {
-        return domains[_name].domainOwner;
+        uint ex = domains[_name].domainExpiry;
+        if (ex != 0) {
+            if (block.number > ex) {
+                return domains[_name].domainOwner;
+            }
+        } else return address(0);
     }
 
     // Lookup specific domain's owner and expiry
