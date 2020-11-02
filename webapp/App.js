@@ -10,6 +10,7 @@ import {
   claimDomain,
   generateCommit,
   updateBlockNumber,
+  claimCheck,
 } from "./domainRegistrar.js";
 
 // example from doc: https://reactjs.org/docs/forms.html#controlled-components
@@ -130,7 +131,12 @@ class App extends React.Component {
     this.setState({ claimAddressInput: e.target.value });
   }
   handleClaim = async () => {
-    let result = await claimDomain(this.state.claimNameInput, this.state.claimAddressInput, this.state.claimValueInput);
+    let claimStatus = await claimCheck(this.state.claimNameInput);
+    if (!claimStatus) {
+      alert("Cannot claim domain");
+    } else {
+      let result = await claimDomain(this.state.claimNameInput, this.state.claimAddressInput, this.state.claimValueInput);
+    }
   }
 
   // Send ether functionality
