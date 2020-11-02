@@ -23,15 +23,19 @@ class App extends React.Component {
       claimNameInput: "",
       claimValueInput: "",
       claimAddressInput: "",
+      sendNameInput: "",
+      sendValueInput: "",
       generateBidInput: "",
       generateSaltInput: "",
       generateSaltOutput: "",
       address: "0x0",
       expiry: 0,
     };
-
+    
+    // Bindings for inputs and buttons
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
+
     this.handleGenerateBidChange = this.handleGenerateBidChange.bind(this);
     this.handleGenerateSaltChange = this.handleGenerateSaltChange.bind(this);
     this.handleGenerate = this.handleGenerate.bind(this);
@@ -92,12 +96,22 @@ class App extends React.Component {
   handleClaimValueChange = (e) => {
     this.setState({ claimValueInput: e.target.value });
   }
-
   handleClaimAddressChange = (e) => {
     this.setState({ claimAddressInput: e.target.value });
   }
   handleClaim = async () => {
     let result = await claimDomain(this.state.claimNameInput, this.state.claimAddressInput, this.state.claimValueInput);
+  }
+
+  // Send ether functionality
+  handleSendNameChange = (e) => {
+    this.setState({ sendNameInput: e.target.value });
+  }
+  handleSendValueChange = (e) => {
+    this.setState({ sendValueInput: e.target.value });
+  }
+  handleSend = async () => {
+    let result = await sendEther(this.state.sendNameInput, this.state.sendValueInput);
   }
 
   // Generate bid commit hash functionality
@@ -109,12 +123,11 @@ class App extends React.Component {
   }
   handleGenerate = async () => {
     let generateResult = await generateCommit(this.state.generateBidInput, this.state.generateSaltInput);
-    console.log(generateResult);
     this.setState({ generateSaltOutput: generateResult})
   }
 
   render() {
-    // Layout: Registered, Query, New, Add, Reveal, Claim, Send
+    // Layout: Registered, Query, New, Add, Reveal, Claim, Send, Generate
     return (
       <>
         <h1>Welcome to Bitalik Sakamoto's Domain Registrar dApp</h1>
@@ -226,6 +239,24 @@ class App extends React.Component {
         <input type="submit" value="Claim Domain" onClick={this.handleClaim} />
         <hr />
 
+        <h2>Send Ether to Domain</h2>
+        <input
+          type="text"
+          placeholder="Enter Domain to send ether to"
+          value={this.state.sendNameInput}
+          onChange={this.handleSendNameChange}
+          style={{width: "250px"}}
+        />{"  "}
+          <input
+          type="text"
+          placeholder="Enter amount value (wei)"
+          value={this.state.sendValueInput}
+          onChange={this.handleSendValueChange}
+          style={{width: "250px"}}
+        />{"  "}
+        <input type="submit" value="Send Ether" onClick={this.handleSend} />
+        <hr />
+
         <h2>Generate Bid Commit</h2>
         <input
           type="text"
@@ -245,8 +276,6 @@ class App extends React.Component {
         <p>
           Generated bid commit hash: {this.state.generateSaltOutput}
         </p>
-
-        <h2>Send Ether to Domain</h2>
         <hr />
       </>
     );
