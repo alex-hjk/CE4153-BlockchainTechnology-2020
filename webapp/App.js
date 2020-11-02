@@ -1,10 +1,11 @@
 import React from "react";
 import {
-  querySpecificDomain,
-  generateCommit,
   RegistrarAddress,
   BidderAddress,
   Testnet,
+  querySpecificDomain,
+  generateCommit,
+  updateBlockNumber,
 } from "./domainRegistrar.js";
 
 // example from doc: https://reactjs.org/docs/forms.html#controlled-components
@@ -31,6 +32,7 @@ class App extends React.Component {
       generateBidInput: "",
       generateSaltInput: "",
       generateSaltOutput: "",
+      currentBlock: "",
     };
 
     // Bindings for inputs and buttons
@@ -128,6 +130,12 @@ class App extends React.Component {
     this.setState({ generateSaltOutput: generateResult})
   }
 
+  // Block number update functionality
+  handleBlockUpdate = async () => {
+    let updateBlockResult = await updateBlockNumber();
+    this.setState({ currentBlock: updateBlockResult})
+  }
+
   render() {
     // Layout: Registered, Query, New, Add, Reveal, Claim, Send, Generate
     return (
@@ -136,6 +144,8 @@ class App extends React.Component {
         <p>Registrar Contract Address: {RegistrarAddress}</p>
         <p>Bidder Contract Address: {BidderAddress}</p>
         <p>Network: {Testnet}</p>
+        <p>Current block number: {this.state.currentBlock}</p>
+        <input type="submit" value="Update Block Number" onClick={this.handleBlockUpdate} />
         <hr />
 
         <h2>Registered Domains</h2>
