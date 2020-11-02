@@ -67,6 +67,18 @@ contract Bidder is Ownable {
     // Map domain name to Bidding info
     mapping (string => Bidding) public bids;
 
+    // ******** Events ********
+
+    event StartBid(
+        string domainName,
+        address bidder
+    );
+
+    event ClaimDomain(
+        string domainName,
+        address owner
+    );
+
     // ******** Commit phase ********
 
     // Check for inactive bidding cycle
@@ -128,6 +140,9 @@ contract Bidder is Ownable {
 
         // Set bid to active
         b.active = true;
+
+        // Emit event
+        emit StartBid(_name, msg.sender);
     }
 
     // Add to an active bid
@@ -145,22 +160,26 @@ contract Bidder is Ownable {
         Bidding storage b = bids[_name];
 
         // Compute commit hash based on bid value and salt
-        bytes32 commitCalc = keccak256(abi.encode(_value, _salt));
+        bytes32 commitCalc = keccak256(abi.encodePacked(_value, _salt));
 
         // Require calculated hash to match previously committed hash within same bidding cycle
         require(b.commits[msg.sender].commitHash == commitCalc);
         require(b.commits[msg.sender].commitBlock <= b.commitExpiry);
 
-        // Check if bid value is highest bid and set if true
+        // Check if bid value is highest bid and set if true, with equal bid tiebreaker based on earlier commit and equal commit tiebreaker based on earlier reveal tx
         if (b.highestBid < _value) {
             b.highestBid = _value;
             b.highestBidder = msg.sender;
+        } else if (b.highestBid == _value) {
+            if (b.commits[msg.sender].commitBlock < b.commits[b.highestBidder].commitBlock) {
+                b.highestBidder = msg.sender;
+            }
         }
     }
 
     // ******** Claim phase ********
 
-    function claimDomain(string memory _name) external biddingActive(_name) claimPhase(_name) payable {
+    function claimDomain(string memory _name, address _target) external biddingActive(_name) claimPhase(_name) payable {
         Bidding storage b = bids[_name];
 
         // Only allow highest bidder to claim domain
@@ -172,11 +191,17 @@ contract Bidder is Ownable {
         // Set bidding to inactive after claim, state change before external function
         b.active = false;
 
-        // Store domain registration info in registrar
-        reg.addDomain(_name, msg.sender);
+        // Store domain registration info in registrar for target resolution address
+        reg.addDomain(_name, _target);
 
-        // Refund excess fee back to msg.sender
-        msg.sender.transfer(msg.value - b.highestBid);
+        // Refund excess fee back to msg.sender if necessary
+        if (msg.value - b.highestBid > 0) {
+            msg.sender.transfer(msg.value - b.highestBid);
+        }
+
+
+        // Emit event
+        emit ClaimDomain(_name, msg.sender);
     }
 
     // ******** Withdraw functionality ********
@@ -189,7 +214,7 @@ contract Bidder is Ownable {
 
     // Generates hashed commit, can be called for free externally
     function generateHash(uint _value, string memory _salt) public pure returns(bytes32) {
-        return keccak256(abi.encode(_value, _salt));
+        return keccak256(abi.encodePacked(_value, _salt));
     }
 
     // Returns current commit length, in blocks

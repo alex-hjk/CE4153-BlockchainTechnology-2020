@@ -18,6 +18,22 @@ contract Registrar is Ownable {
         _;
     }
     
+    // ******** Events ********
+
+    // Indexed address can be used for reverse lookup by filtering through historical events
+    event AddDomain(
+        string domainName,
+        address indexed owner,
+        uint expiry
+    );
+
+    // Also emit domain removals to cross-check against domain adding events, using expiry as unique identifier
+    event RemoveDomain(
+        string domainName,
+        address indexed owner,
+        uint expiry
+    );
+
     // ******** Domain storage ********
     uint defaultDomainExpiry = 2427456;    // 1 year / 13 seconds (estimated block time)
 
@@ -34,16 +50,24 @@ contract Registrar is Ownable {
     // Create mapping from domain name string to domain info struct
     mapping (string => Domain) public domains;
 
+
     // Commit domain to registrar after claimed bid
-    function addDomain(string memory _name, address _owner) external onlyBidder {
+    function addDomain(string memory _name, address _target) external onlyBidder {
         Domain storage d = domains[_name];
-        d.domainOwner = _owner;
+        d.domainOwner = _target;
         d.domainExpiry = block.number + defaultDomainExpiry;
+
+        // Emit event to log registered domain details
+        emit AddDomain(_name, _target, d.domainExpiry);
     }
 
     // Remove domain from registrar
     function removeDomain(string memory _name) external {
         require(isOwner() || msg.sender == _bidder);        // only owner or bidder contract can delete domains
+        
+        // Emit event to log domain removal
+        emit RemoveDomain(_name, domains[_name].domainOwner, domains[_name].domainExpiry);
+        
         delete domains[_name];
     }
     
@@ -59,6 +83,11 @@ contract Registrar is Ownable {
         return domains[_name].domainExpiry;
     }
     
+    // Gets domain owner - name resolution service
+    function getOwner(string memory _name) public view returns(address) {
+        return domains[_name].domainOwner;
+    }
+
     // Lookup specific domain's owner and expiry
     function getSpecificDomainDetails(string memory _domainName) public view returns(address domainOwner, uint domainExpiry) {
         return (domains[_domainName].domainOwner, domains[_domainName].domainExpiry);
