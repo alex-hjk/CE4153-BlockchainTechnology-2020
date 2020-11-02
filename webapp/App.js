@@ -12,6 +12,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       queryInput: "",
+      startInput: "",
       address: "0x0",
       expiry: 0,
     };
@@ -19,16 +20,26 @@ class App extends React.Component {
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.handleQuery = this.handleQuery.bind(this);
   }
+
   handleQueryChange = (e) => {
     this.setState({ queryInput: e.target.value });
-  };
+  }
+
   handleQuery = async () => {
     let result = await querySpecificDomain(this.state.queryInput);
     this.setState({
       address: result.owner,
       expiry: result.expiry,
     });
-  };
+  }
+
+  handleStartChange = (e) => {
+    this.setState({ startInput: e.target.value });
+  }
+
+  handleStart = async () => {
+    let result = await startBid(this.state.startInput);
+  }
 
   render() {
     // Layout: Registered, Query, New, Add, Reveal, Claim, Send
@@ -49,7 +60,7 @@ class App extends React.Component {
           placeholder="Enter Domain to query"
           value={this.state.value}
           onChange={this.handleQueryChange}
-        />{" "}
+        />{"  "}
         <input type="submit" value="Query Deposit" onClick={this.handleQuery} />
         <p>
           Query Result: Domain {this.state.queryInput} resolves to {this.state.address} and expires at block number {this.state.expiry}.
@@ -57,6 +68,13 @@ class App extends React.Component {
         <hr />
 
         <h2>Start New Bid</h2>
+        <input
+          type="text"
+          placeholder="Enter Domain to bid for"
+          value={this.state.startValue}
+          onChange={this.handleStartChange}
+        />{"  "}
+        <input type="submit" value="Start Bid" onClick={this.handleStart} />
         <hr />
 
         <h2>Add Bid</h2>
