@@ -33,6 +33,41 @@ if (window.ethereum) {
 const regContract = new web3.eth.Contract(RegistrarArtifact.abi, RegistrarAddress);
 const bidContract = new web3.eth.Contract(BidderArtifact.abi, BidderAddress);
 
+// Set up event listeners
+// Registrar Listeners
+regContract.events.AddDomain()
+.on('data', function(event){
+  console.log(event);
+  var {domainName, target, domainExpiry} = event.returnedValues;
+  console.log(`Domain ${domainName} added. Owner: ${target}, Expiry: ${domainExpiry}.`);
+})
+.on('error', console.error);
+
+regContract.events.RemoveDomain()
+.on('data', function(event){
+  console.log(event);
+  var {domainName, target, domainExpiry} = event.returnedValues;
+  console.log(`Domain ${domainName} deleted. Owner: ${target}, Expiry: ${domainExpiry}.`);
+})
+.on('error', console.error);
+
+// Bidder Listeners
+bidContract.events.StartBid()
+.on('data', function(event){
+  console.log(event);
+  var {name, sender} = event.returnedValues;
+  console.log(`Bid for domain ${name} started by ${sender}.`);
+})
+.on('error', console.error);
+
+bidContract.events.ClaimDomain()
+.on('data', function(event){
+  console.log(event);
+  var {name, sender} = event.returnedValues;
+  console.log(`Domain ${name} claimed by ${sender}.`);
+})
+.on('error', console.error);
+
 export const querySpecificDomain = async (domainName) => {
   const {domainOwner, domainExpiry} = await regContract.methods.getSpecificDomainDetails(domainName).call();
   return { owner: domainOwner, expiry: domainExpiry };
