@@ -51,7 +51,7 @@ class App extends React.Component {
       sendValueInput: "",
       generateBidInput: "",
       generateSaltInput: "",
-      generateSaltOutput: "",
+      generateBidOutput: "",
       currentBlock: "",
     };
 
@@ -224,7 +224,7 @@ class App extends React.Component {
   }
   handleGenerate = async () => {
     let generateResult = await generateCommit(this.state.generateBidInput, this.state.generateSaltInput);
-    this.setState({ generateSaltOutput: generateResult})
+    this.setState({ generateBidOutput: generateResult})
   }
 
   // Block number update functionality
@@ -426,9 +426,13 @@ class App extends React.Component {
           style={{width: "250px"}}
         />{"  "}
         <input type="submit" value="Generate Bid Commit" onClick={this.handleGenerate} />
-        <p>
-          Generated bid commit hash: {this.state.generateSaltOutput}
-        </p>
+        {this.state.generateBidOutput &&
+          <>
+            <p>
+              Generated bid commit hash: {this.state.generateBidOutput}
+            </p>
+          </>
+        }
         <hr />
       </>
     );
