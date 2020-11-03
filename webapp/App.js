@@ -241,7 +241,7 @@ class App extends React.Component {
         <p>Registrar Contract Address: {RegistrarAddress}</p>
         <p>Bidder Contract Address: {BidderAddress}</p>
         <p>Network: {Testnet}</p>
-        <p>Current block number: {this.state.currentBlock}</p>
+        <p>Current block number: <b>{this.state.currentBlock}</b></p>
         <input type="submit" value="Update Block Number" onClick={this.handleBlockUpdate} />
         <hr />
 
