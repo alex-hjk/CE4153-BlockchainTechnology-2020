@@ -130,6 +130,9 @@ export const claimDomain = async(domainName, targetAddress, value) => {
   if (!(await bidContract.methods.canClaim(domainName).call())) {
     alert("Cannot claim domain. Please check that the domain input is valid.");
     return
+  } else if (!(await isAddress(targetAddress))){
+    alert("Cannot claim domain. Please check that the address input is valid.");
+    return
   }
   await bidContract.methods.claimDomain(domainName, targetAddress).send({from: ethereum.selectedAddress, value: value});
   return
