@@ -32,7 +32,7 @@ contract Bidder is Ownable {
         claimLength = _claimLength;
     }
 
-    // New Bidding info struct will be created for each new domain name bid initiated
+    // New Bidding info struct will be created for each new domain name auction initiated
     struct Bidding {
 
         // Map sender address to corresponding commit info
