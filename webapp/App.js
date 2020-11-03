@@ -5,6 +5,7 @@ import {
   Testnet,
   getRegisteredDomains,
   querySpecificDomain,
+  queryAddress,
   queryBid,
   startBid,
   addBid,
@@ -28,8 +29,7 @@ class App extends React.Component {
       queryOutput: "",
       reverseQueryInput: "",
       reverseQueryAddress: "",
-      reverseQueryName: "",
-      reverseQueryExpiry: "",
+      reverseQueryDomains: [],
       bidQueryInput: "",
       bidQueryName: "",
       bidQueryCommitExpiry: "",
@@ -127,10 +127,14 @@ class App extends React.Component {
   }
   handleReverseQuery = async () => {
     let reverseQueryResult = await queryAddress(this.state.reverseQueryInput);    // TODO: Add queryAddress function
+    let reverseQueryDomains = [];
+    for (var i = 0; i < reverseQueryResult.length; i++){
+      var {domainName, owner, expiry} = reverseQueryResult[i].returnValues;
+      reverseQueryDomains.push(<p>Domain: <b>{domainName}.ntu</b> &emsp; Expiry: {expiry}</p>)
+    }
     this.setState({
       reverseQueryAddress: this.state.reverseQueryInput,
-      reverseQueryName: reverseQueryResult.name,
-      reverseQueryExpiry: reverseQueryResult.expiry,
+      reverseQueryDomains: reverseQueryDomains
     });
   }
 
@@ -274,13 +278,7 @@ class App extends React.Component {
           style={{width: "250px"}}
         />{"  "}
         <input type="submit" value="Query Address" onClick={this.handleReverseQuery} />
-        {this.state.reverseQueryAddress &&
-        <>
-          <p>
-            Query result: Address {this.state.reverseQueryAddress} resolves to <b>{this.state.reverseQueryName}.ntu</b> and expires at block number {this.state.reverseQueryExpiry}.
-          </p>
-        </>
-        }
+        {this.state.reverseQueryDomains}
         <hr />
 
         <h2>Query Bid Status</h2>

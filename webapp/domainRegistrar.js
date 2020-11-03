@@ -10,8 +10,8 @@ import BidderArtifact from"../build/contracts/Bidder.json"
 import { isAddress } from "web3-utils";
 
 // Contract setup - to update after deployment
-export const RegistrarAddress = "0x1084D88bfD5439bDb6E5ad7D1663fA1DfcB6b3ed";
-export const BidderAddress = "0xB0FCA77E17f3a03Fa57F0f91c1D997395B97f85F";
+export const RegistrarAddress = "0x09f7Ed3E475972cd1d60C165439EfE1Cb6737532";
+export const BidderAddress = "0x0912d95628A24Ebdb410934aa886f56280bCB7C4";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;
@@ -75,6 +75,19 @@ export const querySpecificDomain = async (domainName) => {
   const {domainOwner, domainExpiry} = await regContract.methods.getSpecificDomainDetails(domainName).call();
   return { owner: domainOwner, expiry: domainExpiry };
 };
+
+// Reverse query
+export const queryAddress = async (address) => {
+  if (!(await isAddress(address))){
+    alert("Address is invalid! Please check that the address input is valid.");
+    return
+  }
+  let queryRes = await regContract.getPastEvents("AddDomain", {
+    filter: {owner: address},
+    fromBlock: 1
+  });
+  return queryRes;
+}
 
 // Query bidding information
 export const queryBid = async (domainName) => {
