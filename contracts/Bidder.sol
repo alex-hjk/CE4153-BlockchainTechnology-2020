@@ -76,7 +76,8 @@ contract Bidder is Ownable {
 
     event ClaimDomain(
         string domainName,
-        address owner
+        address bidder,
+        address target
     );
 
     // ******** Commit phase ********
@@ -201,7 +202,7 @@ contract Bidder is Ownable {
 
 
         // Emit event
-        emit ClaimDomain(_name, msg.sender);
+        emit ClaimDomain(_name, msg.sender, _target);
     }
 
     // ******** Withdraw functionality ********
@@ -242,31 +243,32 @@ contract Bidder is Ownable {
         active = bids[_name].active;
     }
     
+    // All canX checking functions are offset by 1 to simulate tx execution result in the upcoming block
     // Check whether correct phase to proceed with new bid
     function canStart(string memory _name) public view returns(bool) {
         if (bids[_name].active) {
-            return (block.number > bids[_name].claimExpiry);
+            return (block.number + 1 > bids[_name].claimExpiry);
         } else return true;
     }
 
     // Check whether correct phase to proceed with adding bid
     function canAdd(string memory _name) public view returns(bool) {
         return (bids[_name].active
-        && block.number <= bids[_name].commitExpiry);
+        && block.number + 1 <= bids[_name].commitExpiry);
     }
 
     // Check whether correct phase to proceed with revealing bid
     function canReveal(string memory _name) public view returns(bool) {
         return (bids[_name].active
-        && block.number > bids[_name].commitExpiry
-        && block.number <= bids[_name].revealExpiry);
+        && block.number + 1 > bids[_name].commitExpiry
+        && block.number + 1 <= bids[_name].revealExpiry);
     }
 
     // Check whether correct phase to proceed with claiming domain
     function canClaim(string memory _name) public view returns(bool) {
         return (bids[_name].active
-        && block.number > bids[_name].revealExpiry
-        && block.number <= bids[_name].claimExpiry);
+        && block.number + 1 > bids[_name].revealExpiry
+        && block.number + 1 <= bids[_name].claimExpiry);
     }
 
     // Returns current block number

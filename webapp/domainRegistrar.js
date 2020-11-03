@@ -10,8 +10,8 @@ import BidderArtifact from"../build/contracts/Bidder.json"
 import { isAddress } from "web3-utils";
 
 // Contract setup - to update after deployment
-export const RegistrarAddress = "0x09f7Ed3E475972cd1d60C165439EfE1Cb6737532";
-export const BidderAddress = "0x0912d95628A24Ebdb410934aa886f56280bCB7C4";
+export const RegistrarAddress = "0xfee3A40D0f4b9714E417C21Ff23f80155E329226";
+export const BidderAddress = "0x0b21152CB106c711AAF54165f0983fA6369525B2";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;
@@ -39,29 +39,30 @@ const bidContract = new web3.eth.Contract(BidderArtifact.abi, BidderAddress);
 regContract.events.AddDomain()
 .on('data', function(event){
   var {domainName, target, domainExpiry} = event.returnValues;
-  console.log(`Domain ${domainName} added. Owner: ${target}, Expiry: ${domainExpiry}.`);
+  console.log(event.returnValues);
+  console.log(`Domain ${domainName} added. Target: ${target}, Expiry: ${domainExpiry}.`);
 })
 .on('error', console.error);
 
 regContract.events.RemoveDomain()
 .on('data', function(event){
   var {domainName, target, domainExpiry} = event.returnValues;
-  console.log(`Domain ${domainName} deleted. Owner: ${target}, Expiry: ${domainExpiry}.`);
+  console.log(`Domain ${domainName} deleted. Target: ${target}, Expiry: ${domainExpiry}.`);
 })
 .on('error', console.error);
 
 // Bidder Listeners
 bidContract.events.StartBid()
 .on('data', function(event){
-  var {domainName, sender} = event.returnValues;
-  console.log(`Bid for domain ${domainName} started by ${sender}.`);
+  var {domainName, bidder} = event.returnValues;
+  console.log(`Bid for domain ${domainName} started by ${bidder}.`);
 })
 .on('error', console.error);
 
 bidContract.events.ClaimDomain()
 .on('data', function(event){
-  var {domainName, sender} = event.returnValues;
-  console.log(`Domain ${domainName} claimed by ${sender}.`);
+  var {domainName, bidder, target} = event.returnValues;
+  console.log(`Domain ${domainName} claimed by ${bidder} resolves to ${target}.`);
 })
 .on('error', console.error);
 

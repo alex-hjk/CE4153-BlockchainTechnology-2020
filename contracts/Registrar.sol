@@ -22,15 +22,15 @@ contract Registrar is Ownable {
 
     // Indexed address can be used for reverse lookup by filtering through historical events
     event AddDomain(
-        string indexed domainName,
-        address indexed owner,
+        string domainName,
+        address indexed target,
         uint expiry
     );
 
     // Also emit domain removals to cross-check against domain adding events, using expiry as unique identifier
     event RemoveDomain(
         string domainName,
-        address indexed owner,
+        address indexed target,
         uint expiry
     );
 
