@@ -10,8 +10,8 @@ import BidderArtifact from"../build/contracts/Bidder.json"
 import { isAddress } from "web3-utils";
 
 // Contract setup - to update after deployment
-export const RegistrarAddress = "0x9838936492459d4cf97A0F06F9e4d554255DA50B";
-export const BidderAddress = "0xE3180815906C7928ceEB5a18a4a5B8DC16dA2500";
+export const RegistrarAddress = "0xA69b6d53A270b0cD988609b742c5Ac6541b298B3";
+export const BidderAddress = "0x7e7Ffac959E0183EfdBaD3899b73E665a21FF128";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;
@@ -79,7 +79,7 @@ export const querySpecificDomain = async (domainName) => {
 
 // Reverse query
 export const queryAddress = async (address) => {
-  if (!(await isAddress(address))){
+  if (!(isAddress(address))){
     alert("Address is invalid! Please check that the address input is valid.");
     return
   }
@@ -128,7 +128,10 @@ export const revealBid = async(domainName, amount, salt) => {
 
 // Claim domain, called only after validity check passes
 export const claimDomain = async(domainName, targetAddress, value) => {
-  if (!(await bidContract.methods.canClaim(domainName).call())) {
+  if (!(await bidContract.methods.checkHighestBidder(domainName, ethereum.selectedAddress).call())) {
+    alert("Cannot claim domain. Please check that the claiming address is valid.")
+    return
+  } else if (!(await bidContract.methods.canClaim(domainName).call())) {
     alert("Cannot claim domain. Please check that the domain input is valid.");
     return
   } else if (!(await isAddress(targetAddress))){

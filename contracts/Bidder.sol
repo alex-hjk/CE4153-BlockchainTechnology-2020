@@ -242,13 +242,21 @@ contract Bidder is Ownable {
         highBidder = bids[_name].highestBidder;
         active = bids[_name].active;
     }
+
+    // Checks highest bidder address
+    function checkHighestBidder(string memory _name, address claimer) public view returns(bool) {
+        return (bids[_name].highestBidder == claimer);
+    }
     
     // All canX checking functions are offset by 1 to simulate tx execution result in the upcoming block
-    // Check whether correct phase to proceed with new bid
+    // Check whether to proceed with new bid, checking for unclaimed or expired domains
     function canStart(string memory _name) public view returns(bool) {
         if (bids[_name].active) {
             return (block.number + 1 > bids[_name].claimExpiry);
-        } else return true;
+        } else {
+            uint ex = reg.getExpiry(_name);
+            return (block.number + 1 > ex);
+        }
     }
 
     // Check whether correct phase to proceed with adding bid
