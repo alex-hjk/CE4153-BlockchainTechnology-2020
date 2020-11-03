@@ -1,7 +1,3 @@
-import { useState, useRef, useEffect } from "react";
-import detectEthereumProvider from "@metamask/detect-provider";
-
-// NOTE: be aware of this: https://flaviocopes.com/parcel-regeneratorruntime-not-defined/
 import Web3 from "web3";
 
 // Import compiled contract artifacts for function interaction
@@ -9,7 +5,7 @@ import RegistrarArtifact from "../build/contracts/Registrar.json";
 import BidderArtifact from"../build/contracts/Bidder.json"
 import { isAddress } from "web3-utils";
 
-// Contract setup - to update after deployment
+// Contract setup - to update after every Truffle migration
 export const RegistrarAddress = "0xA69b6d53A270b0cD988609b742c5Ac6541b298B3";
 export const BidderAddress = "0x7e7Ffac959E0183EfdBaD3899b73E665a21FF128";
 
@@ -21,7 +17,6 @@ export const Testnet = "localhost";
 
 // Set up web3 provider
 let web3;
-
 if (window.ethereum) {
   web3 = new Web3(window.ethereum);
   window.ethereum.enable();
@@ -66,6 +61,7 @@ bidContract.events.ClaimDomain()
 })
 .on('error', console.error);
 
+// Obtain registered domains by searching past emitted events
 export const getRegisteredDomains = async() => {
   let addedDomains = await regContract.getPastEvents("AddDomain", { fromBlock: 1});
   return addedDomains;
@@ -77,7 +73,7 @@ export const querySpecificDomain = async (domainName) => {
   return { owner: domainOwner, expiry: domainExpiry };
 };
 
-// Reverse query
+// Reverse query from address to domain(s) by searching past emitted events
 export const queryAddress = async (address) => {
   if (!(isAddress(address))){
     alert("Address is invalid! Please check that the address input is valid.");
@@ -126,7 +122,7 @@ export const revealBid = async(domainName, amount, salt) => {
   return
 }
 
-// Claim domain, called only after validity check passes
+// Claim domain, called only after validity checks pass
 export const claimDomain = async(domainName, targetAddress, value) => {
   if (!(await bidContract.methods.checkHighestBidder(domainName, ethereum.selectedAddress).call())) {
     alert("Cannot claim domain. Please check that the claiming address is valid.")
@@ -134,7 +130,7 @@ export const claimDomain = async(domainName, targetAddress, value) => {
   } else if (!(await bidContract.methods.canClaim(domainName).call())) {
     alert("Cannot claim domain. Please check that the domain input is valid.");
     return
-  } else if (!(await isAddress(targetAddress))){
+  } else if (!(isAddress(targetAddress))){
     alert("Cannot claim domain. Please check that the address input is valid.");
     return
   }
@@ -165,11 +161,13 @@ export const sendEther = async(domainName, value) => {
   .on('error', console.error);
 }
 
+// Fetches current block number
 export const updateBlockNumber = async() => {
   const blockNum = regContract.methods.currentBlock().call();
   return blockNum;
 }
 
+// Generates commit hash using web3.utils to match solidity encodePacked
 export const generateCommit = async(amount, salt) => {
   const commit = web3.utils.soliditySha3({t:'uint', v: web3.utils.toWei(amount, 'ether')}, {t:'string', v: salt});
   return commit;

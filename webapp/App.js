@@ -16,7 +16,6 @@ import {
   sendEther
 } from "./domainRegistrar.js";
 
-// example from doc: https://reactjs.org/docs/forms.html#controlled-components
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -126,7 +125,7 @@ class App extends React.Component {
     this.setState({ reverseQueryInput: e.target.value });
   }
   handleReverseQuery = async () => {
-    let reverseQueryResult = await queryAddress(this.state.reverseQueryInput);    // TODO: Add queryAddress function
+    let reverseQueryResult = await queryAddress(this.state.reverseQueryInput);
     let reverseQueryDomains = [];
     for (var i = 0; i < reverseQueryResult.length; i++){
       var {domainName, owner, expiry} = reverseQueryResult[i].returnValues;
