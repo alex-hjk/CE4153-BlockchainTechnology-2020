@@ -10,8 +10,8 @@ import BidderArtifact from"../build/contracts/Bidder.json"
 import { isAddress } from "web3-utils";
 
 // Contract setup - to update after deployment
-export const RegistrarAddress = "0xfee3A40D0f4b9714E417C21Ff23f80155E329226";
-export const BidderAddress = "0x0b21152CB106c711AAF54165f0983fA6369525B2";
+export const RegistrarAddress = "0x9838936492459d4cf97A0F06F9e4d554255DA50B";
+export const BidderAddress = "0xE3180815906C7928ceEB5a18a4a5B8DC16dA2500";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;

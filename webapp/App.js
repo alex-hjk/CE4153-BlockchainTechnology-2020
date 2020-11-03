@@ -307,10 +307,10 @@ class App extends React.Component {
         }
         <hr />
 
-        <h2>Start New Bid</h2>
+        <h2>Start New Auction</h2>
         <input
           type="text"
-          placeholder="Enter Domain to start a bid for"
+          placeholder="Enter Domain to start an auction for"
           value={this.state.startNameValue}
           onChange={this.handleStartNameChange}
           style={{width: "250px"}}
@@ -322,7 +322,7 @@ class App extends React.Component {
           onChange={this.handleStartHashChange}
           style={{width: "350px"}}
         />{"  "}
-        <input type="submit" value="Start Bid" onClick={this.handleStart} />
+        <input type="submit" value="Start Auction" onClick={this.handleStart} />
         <hr />
 
         <h2>Add Bid</h2>
