@@ -87,7 +87,7 @@ contract Registrar is Ownable {
     function getOwner(string memory _name) public view returns(address) {
         uint ex = domains[_name].domainExpiry;
         if (ex != 0) {
-            if (block.number > ex) {
+            if (block.number < ex) {
                 return domains[_name].domainOwner;
             }
         } else return address(0);

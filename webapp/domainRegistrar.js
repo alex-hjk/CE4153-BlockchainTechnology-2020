@@ -93,7 +93,7 @@ export const queryAddress = async (address) => {
 // Query bidding information
 export const queryBid = async (domainName) => {
   const {commitExp, revealExp, claimExp, highBid, highBidder, active} = await bidContract.methods.getBiddingInfo(domainName).call();
-  return { commit: commitExp, reveal: revealExp, claim: claimExp, bid: highBid, bidder: highBidder, status: active };
+  return { commit: commitExp, reveal: revealExp, claim: claimExp, bid: web3.utils.fromWei(highBid, 'ether'), bidder: highBidder, status: active };
 };
 
 // Start bid, called only after validity check passes
@@ -122,7 +122,7 @@ export const revealBid = async(domainName, amount, salt) => {
     alert("Cannot reveal bid. Please check that the domain input is valid.");
     return
   }
-  await bidContract.methods.revealBid(domainName, amount, salt).send({from: ethereum.selectedAddress});
+  await bidContract.methods.revealBid(domainName, web3.utils.toWei(amount, 'ether'), salt).send({from: ethereum.selectedAddress});
   return
 }
 
@@ -135,19 +135,20 @@ export const claimDomain = async(domainName, targetAddress, value) => {
     alert("Cannot claim domain. Please check that the address input is valid.");
     return
   }
-  await bidContract.methods.claimDomain(domainName, targetAddress).send({from: ethereum.selectedAddress, value: value});
+  await bidContract.methods.claimDomain(domainName, targetAddress).send({from: ethereum.selectedAddress, value: web3.utils.toWei(value, 'ether')});
   return
 }
 
 // Send ether to domain
 export const sendEther = async(domainName, value) => {
   let domainOwner = await regContract.methods.getOwner(domainName).call();
+  console.log(domainOwner);
   if (domainOwner == 0x0){
     alert("Cannot send ether to domain. Domain might not be registered or may have expired.");
     return
   }
   web3.eth.sendTransaction({
-    from: ethereum.selectedAddress, to: domainOwner, value: value
+    from: ethereum.selectedAddress, to: domainOwner, value: web3.utils.toWei(value, 'ether')
   })
   .on('transactionHash', function(hash){
     console.log(`Transaction sent with hash ${hash}`);
@@ -167,6 +168,6 @@ export const updateBlockNumber = async() => {
 }
 
 export const generateCommit = async(amount, salt) => {
-  const commit = web3.utils.soliditySha3({t:'uint', v: amount}, {t:'string', v: salt});
+  const commit = web3.utils.soliditySha3({t:'uint', v: web3.utils.toWei(amount, 'ether')}, {t:'string', v: salt});
   return commit;
 }

@@ -299,7 +299,7 @@ class App extends React.Component {
               <li>Commit expiry: {this.state.bidQueryCommitExpiry}</li>
               <li>Reveal expiry: {this.state.bidQueryRevealExpiry}</li>
               <li>Claim expiry: {this.state.bidQueryClaimExpiry}</li>
-              <li>Highest bid (wei): {this.state.bidQueryHighestBid}</li>
+              <li>Highest bid (eth): {this.state.bidQueryHighestBid}</li>
               <li>Highest bidder: {this.state.bidQueryHighestBidder}</li>
               <li>Bid is active: {String(this.state.bidQueryActive)}</li>
             </ul>
@@ -353,7 +353,7 @@ class App extends React.Component {
         />{"  "}
           <input
           type="text"
-          placeholder="Enter bid value"
+          placeholder="Enter bid value (eth)"
           value={this.state.revealBidValue}
           onChange={this.handleRevealBidChange}
           style={{width: "250px"}}
@@ -378,7 +378,7 @@ class App extends React.Component {
         />{"  "}
           <input
           type="text"
-          placeholder="Enter amount value (wei)"
+          placeholder="Enter amount value (eth)"
           value={this.state.claimValueInput}
           onChange={this.handleClaimValueChange}
           style={{width: "250px"}}
@@ -403,7 +403,7 @@ class App extends React.Component {
         />{"  "}
           <input
           type="text"
-          placeholder="Enter amount value (wei)"
+          placeholder="Enter amount value (eth)"
           value={this.state.sendValueInput}
           onChange={this.handleSendValueChange}
           style={{width: "250px"}}
@@ -414,7 +414,7 @@ class App extends React.Component {
         <h2>Generate Bid Commit</h2>
         <input
           type="text"
-          placeholder="Enter bid amount value (wei)"
+          placeholder="Enter bid value (eth)"
           value={this.state.generateBidInput}
           onChange={this.handleGenerateBidChange}
           style={{width: "250px"}}
