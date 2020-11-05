@@ -6,8 +6,8 @@ import BidderArtifact from"../build/contracts/Bidder.json"
 import { isAddress } from "web3-utils";
 
 // Contract setup - to update after every Truffle migration
-export const RegistrarAddress = "0xA204c826df3502ea9664d2dcDa5c5BfFA7AFF1f7";
-export const BidderAddress = "0x6A50400BeE40F4E325757f372f30b4dd57970A77";
+export const RegistrarAddress = "0x0d8ae50374D22A568b53de0B1913740e5D4146bf";
+export const BidderAddress = "0x8d3eb724E69d32e017cF245963f8c4523f1C3d88";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;
@@ -114,7 +114,10 @@ export const addBid = async(domainName, commit) => {
 
 // Reveal bid, called only after validity check passes
 export const revealBid = async(domainName, amount, salt) => {
-  if (!(await bidContract.methods.canReveal(domainName).call())) {
+  if (!await bidContract.methods.checkValidCommit(domainName, ethereum.selectedAddress, web3.utils.toWei(amount, 'ether'), salt).call()) {
+    alert("Cannot reveal bid. Please check that the bid commit details are valid.")
+    return
+  } else if (!(await bidContract.methods.canReveal(domainName).call())) {
     alert("Cannot reveal bid. Please check that the domain input is valid.");
     return
   }

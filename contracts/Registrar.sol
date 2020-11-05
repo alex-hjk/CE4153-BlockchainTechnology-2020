@@ -35,7 +35,7 @@ contract Registrar is Ownable {
     );
 
     // ******** Domain storage ********
-    uint defaultDomainExpiry = 2427456;    // 1 year / 13 seconds (estimated block time)
+    uint defaultDomainExpiry = 3;    // 3 for demo, but could be set to 2427456: 1 year / 13 seconds (estimated block time)
 
     // Setter function for domainExpiry length, modifiable only by Owner
     function setDefaultDomainExpiry(uint _domainExpiry) external onlyOwner {

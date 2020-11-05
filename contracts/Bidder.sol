@@ -242,11 +242,6 @@ contract Bidder is Ownable {
         highBidder = bids[_name].highestBidder;
         active = bids[_name].active;
     }
-
-    // Checks highest bidder address
-    function checkHighestBidder(string memory _name, address claimer) public view returns(bool) {
-        return (bids[_name].highestBidder == claimer);
-    }
     
     // All canX checking functions are offset by 1 to simulate tx execution result in the upcoming block
     // Check whether to proceed with new bid, checking for unclaimed or expired domains
@@ -265,11 +260,27 @@ contract Bidder is Ownable {
         && block.number + 1 <= bids[_name].commitExpiry);
     }
 
+    // Checks if commit based on user input is valid
+    function checkValidCommit(string memory _name, address _revealer, uint _value, string memory _salt) public view returns(bool) {
+        Bidding storage b = bids[_name];
+
+        // Compute commit hash based on bid value and salt
+        bytes32 commitCalc = keccak256(abi.encodePacked(_value, _salt));
+
+        return (b.commits[_revealer].commitHash == commitCalc
+        && b.commits[_revealer].commitBlock <= b.commitExpiry);
+    }
+
     // Check whether correct phase to proceed with revealing bid
     function canReveal(string memory _name) public view returns(bool) {
         return (bids[_name].active
         && block.number + 1 > bids[_name].commitExpiry
         && block.number + 1 <= bids[_name].revealExpiry);
+    }
+
+    // Checks highest bidder address
+    function checkHighestBidder(string memory _name, address claimer) public view returns(bool) {
+        return (bids[_name].highestBidder == claimer);
     }
 
     // Check whether correct phase to proceed with claiming domain
