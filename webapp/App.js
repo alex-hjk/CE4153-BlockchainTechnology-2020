@@ -13,6 +13,7 @@ import {
   claimDomain,
   generateCommit,
   updateBlockNumber,
+  advanceBlockNumber,
   sendEther
 } from "./domainRegistrar.js";
 
@@ -92,6 +93,8 @@ class App extends React.Component {
     this.handleGenerateBidChange = this.handleGenerateBidChange.bind(this);
     this.handleGenerateSaltChange = this.handleGenerateSaltChange.bind(this);
     this.handleGenerate = this.handleGenerate.bind(this);
+
+    this.handleAdvanceBlock = this.handleAdvanceBlock.bind(this);
   }
 
   // Handle refresh registered domain list
@@ -233,6 +236,13 @@ class App extends React.Component {
     this.setState({ currentBlock: updateBlockResult})
   }
 
+  // Block advance functionality, then update block number
+  handleAdvanceBlock = async () => {
+    let advanceBlockResult = await advanceBlockNumber();
+    let updateBlockResult = await updateBlockNumber();
+    this.setState({ currentBlock: updateBlockResult})
+  }
+
   render() {
     // Layout: Registered, Query Domain, Query Bid, New, Add, Reveal, Claim, Send, Generate
     return (
@@ -243,6 +253,7 @@ class App extends React.Component {
         <p>Network: {Testnet}</p>
         <p>Current block number: <b>{this.state.currentBlock}</b></p>
         <input type="submit" value="Update Block Number" onClick={this.handleBlockUpdate} />
+        <input type="submit" value="Advance Block" onClick={this.handleAdvanceBlock} />
         <hr />
 
         <h2>Registered Domains</h2>

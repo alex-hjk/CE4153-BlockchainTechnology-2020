@@ -6,8 +6,8 @@ import BidderArtifact from"../build/contracts/Bidder.json"
 import { isAddress } from "web3-utils";
 
 // Contract setup - to update after every Truffle migration
-export const RegistrarAddress = "0xA69b6d53A270b0cD988609b742c5Ac6541b298B3";
-export const BidderAddress = "0x7e7Ffac959E0183EfdBaD3899b73E665a21FF128";
+export const RegistrarAddress = "0xA204c826df3502ea9664d2dcDa5c5BfFA7AFF1f7";
+export const BidderAddress = "0x6A50400BeE40F4E325757f372f30b4dd57970A77";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;
@@ -165,6 +165,12 @@ export const sendEther = async(domainName, value) => {
 export const updateBlockNumber = async() => {
   const blockNum = regContract.methods.currentBlock().call();
   return blockNum;
+}
+
+// Advances block by making 'blank' tx
+export const advanceBlockNumber = async() => {
+  const advanceBlockNumber = await bidContract.methods.advanceBlock().send({from: ethereum.selectedAddress});
+  return advanceBlockNumber;
 }
 
 // Generates commit hash using web3.utils to match solidity encodePacked

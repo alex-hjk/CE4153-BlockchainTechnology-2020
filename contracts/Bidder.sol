@@ -279,6 +279,12 @@ contract Bidder is Ownable {
         && block.number + 1 <= bids[_name].claimExpiry);
     }
 
+    // Create tx to advance block number on local deployment
+    uint private num;
+    function advanceBlock() external {
+        num++;
+    }
+    
     // Returns current block number
     function currentBlock() public view returns(uint) {
         return block.number;
