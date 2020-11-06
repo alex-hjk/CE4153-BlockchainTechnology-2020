@@ -133,9 +133,12 @@ class App extends React.Component {
   handleReverseQuery = async () => {
     let reverseQueryResult = await queryAddress(this.state.reverseQueryInput);
     let reverseQueryDomains = [];
+    let currentBlock = await updateBlockNumber();
     for (var i = 0; i < reverseQueryResult.length; i++){
       var {domainName, owner, expiry} = reverseQueryResult[i].returnValues;
-      reverseQueryDomains.push(<p>Domain: <b>{domainName}.ntu</b> &emsp; Expiry: {expiry}</p>)
+      if (expiry >= currentBlock){
+        reverseQueryDomains.push(<p>Domain: <b>{domainName}.ntu</b> &emsp; Expiry: {expiry}</p>)
+      }
     }
     this.setState({
       reverseQueryAddress: this.state.reverseQueryInput,
