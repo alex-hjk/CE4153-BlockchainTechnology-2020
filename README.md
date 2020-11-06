@@ -3,13 +3,13 @@
 This project is a domain name registrar service running on Ethereum, using a "commit-and-reveal" bidding process to implement a fair, open, and transparent on-chain domain auction system.
 
 ## Solution Details
-Users may bid for a unregistered or expired domain name in the registrar through a "commit-and-reveal" blind auction bidding process. The bidding process occurs in 3 phases - **commit, reveal, claim**. All 3 phases will last for a set number of blocks. For the sake of demonstration, each phase lasts for 3 blocks.
+Users may bid for a unregistered or expired domain name in the registrar through a "commit-and-reveal" blind auction bidding process. The bidding process occurs in 3 phases - **commit, reveal, claim**. All 3 phases will last for a set number of blocks. For the sake of demonstration, each phase lasts for **3 blocks**.
 
-During the commit phase, any bidders may add a new bid for a domain. Each address may only hold one bid's hash commit for each domain, and addding a new bid will simply update and replace the existing bid. During this phase, bidders will not know the value of bids from other bidders as only the hash commit of the bid is stored.
+During the *commit* phase, any bidders may add a new bid for a domain. Each address may only hold one bid's hash commit for each domain, and addding a new bid will simply update and replace the existing bid. During this phase, bidders will not know the value of bids from other bidders as only the hash commit of the bid is stored.
 
-During the reveal phase, new bids are no longer allowed, and bidders who have bidded during the commit phase may choose to reveal their bids through the hash commit of their bid value and salt. During this phase, information regarding the highest bidder and bid value will be publicly visible. Whenever a higher bid value is revealed, the bid info for that domain is updated. In the case of a tie in bid value, the bidder who made the commit in an earlier block number will break the tie and win the auction.
+During the *reveal* phase, new bids are no longer allowed, and bidders who have bidded during the commit phase may choose to reveal their bids through the hash commit of their bid value and salt. During this phase, information regarding the highest bidder and bid value will be publicly visible. Whenever a higher bid value is revealed, the bid info for that domain is updated. In the case of a tie in bid value, the bidder who made the commit in an earlier block number will break the tie and win the auction.
 
-During the claim phase, only the address of the highest bidder will be able to claim the domain and register that domain to a target address. During this phase, the highest bidder will also have to send ether value of value greater than or equal to his bid value. Any excess ether is refunded back. In the case where the domain is unclaimed, the bid will expire and the domain will remain unregistered, open for a new round of bidding.
+During the *claim* phase, only the address of the highest bidder will be able to claim the domain and register that domain to a target address. During this phase, the highest bidder will also have to send ether value of value greater than or equal to his bid value. Any excess ether is refunded back. In the case where the domain is unclaimed, the bid will expire and the domain will remain unregistered, open for a new round of bidding.
 
 ## Smart Contracts
 The registrar is powered by two smart contracts written in Solidity.
