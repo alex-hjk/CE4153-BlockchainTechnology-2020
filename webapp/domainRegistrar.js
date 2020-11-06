@@ -6,8 +6,8 @@ import BidderArtifact from"../build/contracts/Bidder.json"
 import { isAddress } from "web3-utils";
 
 // Contract setup - to update after every Truffle migration
-export const RegistrarAddress = "0x0d8ae50374D22A568b53de0B1913740e5D4146bf";
-export const BidderAddress = "0x8d3eb724E69d32e017cF245963f8c4523f1C3d88";
+export const RegistrarAddress = "0x92B5585D71BFaA5F138aeC06ED5A53AFEF9c61Ac";
+export const BidderAddress = "0x37c80cbD60A6deF35526A6b763f5B84EdDDb525a";
 
 // Web3 provider endpoints
 const infuraWSS = `wss://ropsten.infura.io/ws/v3/dfe7b73d377740b69fefd0ed7a8b104d`;

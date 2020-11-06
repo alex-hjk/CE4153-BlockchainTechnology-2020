@@ -291,7 +291,7 @@ class App extends React.Component {
         {this.state.reverseQueryDomains}
         <hr />
 
-        <h2>Query Bid Status</h2>
+        <h2>Query Auction Status</h2>
         <input
           type="text"
           placeholder="Enter Domain to query"
@@ -299,7 +299,7 @@ class App extends React.Component {
           onChange={this.handleBidQueryChange}
           style={{width: "250px"}}
         />{"  "}
-        <input type="submit" value="Query Bid" onClick={this.handleBidQuery} />
+        <input type="submit" value="Query Auction" onClick={this.handleBidQuery} />
         {this.state.bidQueryName &&
           <>
             <p>
@@ -311,7 +311,7 @@ class App extends React.Component {
               <li>Claim expiry: {this.state.bidQueryClaimExpiry}</li>
               <li>Highest bid (eth): {this.state.bidQueryHighestBid}</li>
               <li>Highest bidder: {this.state.bidQueryHighestBidder}</li>
-              <li>Bid is active: {String(this.state.bidQueryActive)}</li>
+              <li>Auction is active: {String(this.state.bidQueryActive)}</li>
             </ul>
           </>
         }
