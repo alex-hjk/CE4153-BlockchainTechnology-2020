@@ -101,9 +101,12 @@ class App extends React.Component {
   handleRefresh = async () => {
     let registeredDomains = [];
     let addedDomains = await getRegisteredDomains();
+    let currentBlock = await updateBlockNumber();
     for (var i = 0; i < addedDomains.length; i++) {
       var {domainName, target, expiry} = addedDomains[i].returnValues;
-      registeredDomains.push(<p>Domain: <b>{domainName}.ntu</b> &emsp; Address: {target} &emsp; Expiry: {expiry}</p>);
+      if (expiry >= currentBlock){
+        registeredDomains.push(<p>Domain: <b>{domainName}.ntu</b> &emsp; Address: {target} &emsp; Expiry: {expiry}</p>);
+      }
     }
     this.setState({
       registeredDomains: registeredDomains
