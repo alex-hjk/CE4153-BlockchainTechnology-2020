@@ -17,7 +17,7 @@ The registrar is powered by two smart contracts written in Solidity.
     - Domain name registrar storage functionality
     1. Mapping `domains` maps the domain name string to the `Domain` struct.
     2. `Domain` struct stores the domain owner and expiry information.
-    3. Function `addDomain` handles the registration of a new domain into the registrar, and may only be called by the bidder through the modifier `onlyBidder`.
+    3. Function `addDomain` handles the registration of a new domain into the registrar, and may only be called by the bidder contract through the modifier `onlyBidder`.
     4. Function `removeDomain` handles the deregistration of an existing domain from the registrar, and may only be called by the owner or the contract of the bidder.
     5. Events `AddDomain` and `RemoveDomain` are defined and emitted whenever a domain is added or removed so that the frontend can update the state of the registered domains.
 - Bidder.sol
@@ -72,13 +72,17 @@ The user interface is a simple [React](https://reactjs.org/) App.
     - Set a name for *Workspace Name*.
     - Under *Truffle Projects*, drag and drop the ```truffle-config.js``` file located in the *decentralised-domain-registrar* folder into the box.
     - Add project.
-- Compile and migrate contracts
+- Compile and deploy contracts
     ```
     cd decentralised-domain-registrar   // enter main project folder
     npm install                         // install dependencies
     truffle compile                     // compile contracts using Truffle
-    truffle migrate                     // migrate contracts using Truffle
+    truffle migrate                     // deploy contracts using Truffle
     ```
+- Update contract addresses
+    - Obtain the deployed Registrar and Bidder addresses from the *Contracts* tab in Ganache.
+    - Copy and paste each address into `RegistrarAddress` and `BidderAddress` respectively in `webapp/domainRegistrar.js`, replacing previous values.
+
 - Set up application front-end
     ```
     cd webapp       // enter front-end folder
