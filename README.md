@@ -25,8 +25,10 @@ The registrar is powered by two smart contracts written in Solidity.
     1. Mapping `bids` maps the domain name string to the `Bidding` struct.
     2. `Bidding` struct stores another mapping `commits` that maps the sender address to the `Commit` struct. `Bidding` also contains additional bid information for each domain.
     3. `Commit` struct stores the commit hash as well as the block number of the commit.
+
 For Ownership and Access control (from OpenZeppelin):
 - Ownable.sol
+
 For Truffle deployment:
 - Migrations.sol
 
