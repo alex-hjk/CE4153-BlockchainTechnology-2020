@@ -97,20 +97,20 @@ contract Bidder is Ownable {
         _;
     }
 
-    // Check for block height < commit expiry
+    // Check for block height <= commit expiry
     modifier commitPhase(string memory _name) {
         require(block.number <= bids[_name].commitExpiry);
         _;
     }
 
-    // Check for commit expiry < block height < reveal expiry
+    // Check for commit expiry < block height <= reveal expiry
     modifier revealPhase(string memory _name) {
         require(block.number > bids[_name].commitExpiry);
         require(block.number <= bids[_name].revealExpiry);
         _;
     }
 
-    // Check for block height > reveal expiry > commit expiry
+    // Check for reveal expiry < block height <= claim expiry
     modifier claimPhase(string memory _name) {
         require(block.number > bids[_name].revealExpiry);
         require(block.number <= bids[_name].claimExpiry);
@@ -199,7 +199,6 @@ contract Bidder is Ownable {
         if (msg.value - b.highestBid > 0) {
             msg.sender.transfer(msg.value - b.highestBid);
         }
-
 
         // Emit event
         emit ClaimDomain(_name, msg.sender, _target);
