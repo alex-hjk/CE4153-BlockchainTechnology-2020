@@ -36,13 +36,59 @@ The user interface is a simple [React](https://reactjs.org/) App.
 ## Installation
 
 ### Prerequisities
+- [NodeJS](https://nodejs.org/en/): environment for Javascript applications
+- [Ganache](https://www.trufflesuite.com/ganache): local blockchain setup
+- [Truffle](https://www.trufflesuite.com/truffle): contract compilation, migration and testing
+- [MetaMask](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en): blockchain interaction
 
-### Setup
-```
-```
-### Deployment
-```
-```
+### Setup and Deployment
+- Set up Ganache
+    - Open Ganache and select *New Workspace*.
+    - Set a name for *Workspace Name*.
+    - Under *Truffle Projects*, drag and drop the ```truffle-config.js``` file located in the *decentralised-domain-registrar* folder into the box.
+    - Add project.
+- Compile and migrate contracts
+    ```
+    cd decentralised-domain-registrar   // enter main project folder
+    npm install                         // install dependencies
+    truffle compile                     // compile contracts using Truffle
+    truffle migrate                     // migrate contracts using Truffle
+    ```
+- Set up application front-end
+    ```
+    cd webapp       // enter front-end folder
+    npm install     // install dependencies
+    npm start       // start application
+    ```
+- Connect MetaMask to Ganache
+    - Open the web browser and start the MetaMask browser extension.
+    - If a MetaMask account is already active, log out or disable and re-enable the MetaMask browser extension.
+    - Select *Import using account seed phrase*.
+    - Under *Wallet Seed*, go back to Ganache, copy the *Mnemonic* seed phrase near the top of the workspace page and paste it into the box.
+    - Set a password.
+    - Restore the account from Ganache.
+    - Under *Networks*, select *Custom RPC*.
+    - Set a network name.
+    - Under *New RPC URL*, go back to Ganache, copy the *RPC Server* address near the top of the workspace page and paste it into the box.
+    - Under *Chain ID*, type in an numeric value, try to save the network, copy the chain ID beginning with *0x* returned with the error and paste it into the box.
+    - Save the network.
+    - Verify that the accounts in the MetaMask account are the same as the accounts reflected in Ganache.
+- Open application
+    - Access the application at ```http://localhost:1234```.
+    - MetaMask should automatically connect to the application site.
+    
+### Re-deployment
+- Re-migrate contracts
+    ```
+    cd decentralised-domain-registrar   // enter main project folder
+    truffle migrate --reset             // re-migrate contracts using Truffle
+    ```
+- Restart application front-end
+    ```
+    cd webapp   // enter front-end folder
+    npm start   // restart application
+    ```
+    
 ### Testing
 Testing is done with Truffle to ensure correct contract functionality in all possible user flows. The following test cases are covered:
 - bidder utils
