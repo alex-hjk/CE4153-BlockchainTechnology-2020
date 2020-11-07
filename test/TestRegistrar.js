@@ -56,7 +56,7 @@ contract("TestRegistrarBidder", accounts => {
             const ownerBalanceBefore = BigInt(await web3.eth.getBalance(accounts[0]));
             const bidderBalanceBefore = BigInt(await web3.eth.getBalance(bidderInstance.address));
 
-            const claimDomain = await bidderInstance.claimDomain(domains[0], {from: accounts[5], value: bidValues[0]});
+            const claimDomain = await bidderInstance.claimDomain(domains[0], accounts[5], {from: accounts[5], value: bidValues[0]});
             assert.strictEqual(claimDomain.receipt.status, true, "transaction success");
 
             const bidderBalanceAfter = BigInt(await web3.eth.getBalance(bidderInstance.address));
@@ -93,7 +93,7 @@ contract("TestRegistrarBidder", accounts => {
                 await blockMinerInstance.mine();
             };
 
-            const claimDomain = await bidderInstance.claimDomain(domains[0], {from: accounts[6], value: bidValues[0]});
+            const claimDomain = await bidderInstance.claimDomain(domains[0], accounts[6], {from: accounts[6], value: bidValues[0]});
             assert.strictEqual(claimDomain.receipt.status, true, "transaction success");
 
             await utils.shouldThrow(bidderInstance.withdraw({from: accounts[1]}));
@@ -145,15 +145,8 @@ contract("TestRegistrarBidder", accounts => {
 
     context("registrar parameters", async() => {
         it("should be able to set bidder address by owner", async() => {
-            const bidderAddress = await registrarInstance.getBidder();
-            assert.strictEqual(bidderAddress, zeroAddress, "bidder address equal");
-
             const result = await registrarInstance.setBidder(bidderInstance.address, {from: accounts[0]});
             assert.strictEqual(result.receipt.status, true, "transaction success");
-
-            const newBidderAddress = await registrarInstance.getBidder();
-            assert.strictEqual(newBidderAddress, bidderInstance.address, "bidder address equal");
-
         });
 
         it("should not be able to set bidder address by non-owner", async() => {
@@ -161,14 +154,8 @@ contract("TestRegistrarBidder", accounts => {
         });
 
         it("should be able to set default domain expiry by owner", async() => {
-            const defaultExpiry = await registrarInstance.getDefaultDomainExpiry();
-            assert.strictEqual(Number(defaultExpiry), 30, "expiry equal");
-
             const result = await registrarInstance.setDefaultDomainExpiry(50, {from: accounts[0]});
             assert.strictEqual(result.receipt.status, true, "transaction success");
-
-            const newDefaultExpiry = await registrarInstance.getDefaultDomainExpiry();
-            assert.strictEqual(Number(newDefaultExpiry), 50, "expiry equal");
         });
 
         it("should not be able to set default domain expiry by non-owner", async() => {
@@ -181,31 +168,6 @@ contract("TestRegistrarBidder", accounts => {
             const inputHash = await web3.utils.soliditySha3({t: 'uint', v: bidValues[0]},{t: 'string', v: bidSalts[0]});
             const newBid = await bidderInstance.startBid(domains[0], inputHash, {from: accounts[1]});
             assert.strictEqual(newBid.receipt.status, true, "transaction success");
-
-            const commitHash = await bidderInstance.getBidCommitHash(domains[0],accounts[1]);
-            assert.strictEqual(commitHash, inputHash, "hash equal");
-            
-            const blockNumber = await web3.eth.getBlockNumber();
-            const commitBlock = await bidderInstance.getBidCommitBlockNumber(domains[0],accounts[1]);
-            assert.strictEqual(Number(commitBlock), blockNumber, "block number equal");
-
-            const bidActive = await bidderInstance.getBidIsActive(domains[0]);
-            assert.strictEqual(bidActive, true, "bid active status equal");
-
-            const bidCommitExpiry = await bidderInstance.getBidCommitExpiry(domains[0]);
-            assert.strictEqual(Number(bidCommitExpiry), blockNumber+3, "bid commit expiry equal");
-
-            const bidRevealExpiry = await bidderInstance.getBidRevealExpiry(domains[0]);
-            assert.strictEqual(Number(bidRevealExpiry), blockNumber+6, "bid commit expiry equal");
-
-            const bidClaimExpiry = await bidderInstance.getBidClaimExpiry(domains[0]);
-            assert.strictEqual(Number(bidClaimExpiry), blockNumber+9, "bid commit expiry equal");
-
-            const bidHighestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0]));
-            assert.strictEqual(bidHighestBid, BigInt(0), "bid highest bid equal");
-
-            const bidHighestBidder = await bidderInstance.getBidHighestBidder(domains[0]);
-            assert.strictEqual(bidHighestBidder, zeroAddress, "bid highest bidder equal");
         });
 
         it("should not be able to start new bid during commit phase", async() => {
@@ -276,12 +238,8 @@ contract("TestRegistrarBidder", accounts => {
                 await blockMinerInstance.mine();
             };
 
-            const claimDomain = await bidderInstance.claimDomain(domains[0], {from: accounts[5], value: bidValues[0]});
+            const claimDomain = await bidderInstance.claimDomain(domains[0], accounts[5], {from: accounts[5], value: bidValues[0]});
             assert.strictEqual(claimDomain.receipt.status, true, "transaction success");
-
-            for(i = 0; i < 5; i++) {
-                await blockMinerInstance.mine();
-            };
 
             const nextHash = await web3.utils.soliditySha3({t: 'uint', v: bidValues[1]},{t: 'string', v: bidSalts[1]});
             await utils.shouldThrow(bidderInstance.startBid(domains[0], nextHash, {from: accounts[6]}));
@@ -306,7 +264,7 @@ contract("TestRegistrarBidder", accounts => {
                 await blockMinerInstance.mine();
             };
 
-            const claimDomain = await bidderInstance.claimDomain(domains[0], {from: accounts[7], value: bidValues[0]});
+            const claimDomain = await bidderInstance.claimDomain(domains[0], accounts[7], {from: accounts[7], value: bidValues[0]});
             assert.strictEqual(claimDomain.receipt.status, true, "transaction success");
 
             for(i = 0; i < 30; i++) {
@@ -366,7 +324,7 @@ contract("TestRegistrarBidder", accounts => {
         });
     });
 
-   context("reveal bid", async() => {
+    context("reveal bid", async() => {
         it("should be able to reveal bid during reveal phase", async() => {
             const inputHash = await web3.utils.soliditySha3({t: 'uint', v: bidValues[0]},{t: 'string', v: bidSalts[0]});
             const newBid = await bidderInstance.startBid(domains[0], inputHash, {from: accounts[3]});
@@ -381,26 +339,12 @@ contract("TestRegistrarBidder", accounts => {
             };
 
             let revealBid;
-            let highestBid;
-            let highestBidder;
 
             revealBid = await bidderInstance.revealBid(domains[0], bidValues[0], bidSalts[0], {from: accounts[3]});
             assert.strictEqual(revealBid.receipt.status, true, "transaction success");
 
-            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0]));
-            assert.strictEqual(highestBid, BigInt(bidValues[0]), "bid highest bid equal");
-
-            highestBidder = await bidderInstance.getBidHighestBidder(domains[0]);
-            assert.strictEqual(highestBidder, accounts[3], "bid highest bidder equal");
-
             revealBid = await bidderInstance.revealBid(domains[0], bidValues[1], bidSalts[1], {from: accounts[4]});
             assert.strictEqual(revealBid.receipt.status, true, "transaction success");
-
-            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0]));
-            assert.strictEqual(highestBid, BigInt(bidValues[1]), "bid highest bid equal");
-
-            highestBidder = await bidderInstance.getBidHighestBidder(domains[0]);
-            assert.strictEqual(highestBidder, accounts[4], "bid highest bidder equal");
         });
 
         it("should let earlier bidder be winner in event of same highest bids", async() => {
@@ -416,23 +360,13 @@ contract("TestRegistrarBidder", accounts => {
                 await blockMinerInstance.mine();
             };
 
+            let revealBid
+
             revealBid = await bidderInstance.revealBid(domains[0], bidValues[0], bidSalts[1], {from: accounts[6]});
             assert.strictEqual(revealBid.receipt.status, true, "transaction success");
 
-            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0]));
-            assert.strictEqual(highestBid, BigInt(bidValues[0]), "bid highest bid equal");
-
-            highestBidder = await bidderInstance.getBidHighestBidder(domains[0]);
-            assert.strictEqual(highestBidder, accounts[6], "bid highest bidder equal");
-
             revealBid = await bidderInstance.revealBid(domains[0], bidValues[0], bidSalts[0], {from: accounts[5]});
             assert.strictEqual(revealBid.receipt.status, true, "transaction success");
-
-            highestBid = BigInt(await bidderInstance.getBidHighestBid(domains[0]));
-            assert.strictEqual(highestBid, BigInt(bidValues[0]), "bid highest bid equal");
-
-            highestBidder = await bidderInstance.getBidHighestBidder(domains[0]);
-            assert.strictEqual(highestBidder, accounts[5], "bid highest bidder equal");
         });
 
         it("should not be able to reveal bid during commit phase", async() => {
@@ -488,9 +422,9 @@ contract("TestRegistrarBidder", accounts => {
             const accountBalanceBefore = BigInt(await web3.eth.getBalance(accounts[6]));
             const bidderBalanceBefore = BigInt(await web3.eth.getBalance(bidderInstance.address));
 
-            await utils.shouldThrow(bidderInstance.claimDomain(domains[0], {from: accounts[9], value: bidValues[0]}))
+            await utils.shouldThrow(bidderInstance.claimDomain(domains[0], accounts[9], {from: accounts[9], value: bidValues[0]}))
 
-            const claimDomain = await bidderInstance.claimDomain(domains[0], {from: accounts[6], value: bidValues[1]});
+            const claimDomain = await bidderInstance.claimDomain(domains[0], accounts[6], {from: accounts[6], value: bidValues[1]});
             assert.strictEqual(claimDomain.receipt.status, true, "transaction success");
 
             const accountBalanceAfter = BigInt(await web3.eth.getBalance(accounts[6]));
@@ -512,7 +446,7 @@ contract("TestRegistrarBidder", accounts => {
 
             domainExpiry = await registrarInstance.getExpiry(domains[0]);
             currentBlock = await registrarInstance.currentBlock();
-            assert.strictEqual(Number(domainExpiry), Number(currentBlock)+30, "domain expiry equal");
+            assert.strictEqual(Number(domainExpiry), Number(currentBlock)+3, "domain expiry equal");
 
             await utils.shouldThrow(registrarInstance.removeDomain(domains[0], {from: accounts[1]}));
 
@@ -548,7 +482,7 @@ contract("TestRegistrarBidder", accounts => {
             const accountBalanceBefore = BigInt(await web3.eth.getBalance(accounts[1]));
             const bidderBalanceBefore = BigInt(await web3.eth.getBalance(bidderInstance.address));
 
-            const claimDomain = await bidderInstance.claimDomain(domains[0], {from: accounts[1], value: bidValues[3]});
+            const claimDomain = await bidderInstance.claimDomain(domains[0], accounts[1], {from: accounts[1], value: bidValues[3]});
             assert.strictEqual(claimDomain.receipt.status, true, "transaction success");
 
             const accountBalanceAfter = BigInt(await web3.eth.getBalance(accounts[1]));
@@ -579,7 +513,7 @@ contract("TestRegistrarBidder", accounts => {
                 await blockMinerInstance.mine();
             };
 
-            await utils.shouldThrow(bidderInstance.claimDomain(domains[0], {from: accounts[2], value: bidValues[4]}));
+            await utils.shouldThrow(bidderInstance.claimDomain(domains[0], accounts[2], {from: accounts[2], value: bidValues[4]}));
         });
 
         it("should not be able to claim domain during commit phase", async() => {
@@ -587,7 +521,7 @@ contract("TestRegistrarBidder", accounts => {
             const newBid = await bidderInstance.startBid(domains[0], inputHash, {from: accounts[3]});
             assert.strictEqual(newBid.receipt.status, true, "transaction success");
 
-            await utils.shouldThrow(bidderInstance.claimDomain(domains[0], {from: accounts[3], value: bidValues[0]}));
+            await utils.shouldThrow(bidderInstance.claimDomain(domains[0], accounts[3], {from: accounts[3], value: bidValues[0]}));
         });
 
         it("should not be able to claim domain during reveal phase", async() => {
@@ -599,7 +533,7 @@ contract("TestRegistrarBidder", accounts => {
                 await blockMinerInstance.mine();
             };
 
-            await utils.shouldThrow(bidderInstance.claimDomain(domains[0], {from: accounts[4], value: bidValues[0]}));
+            await utils.shouldThrow(bidderInstance.claimDomain(domains[0], accounts[4], {from: accounts[4], value: bidValues[0]}));
         });
     });
 })
