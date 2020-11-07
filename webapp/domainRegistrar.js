@@ -112,7 +112,7 @@ export const addBid = async(domainName, commit) => {
   return
 }
 
-// Reveal bid, called only after validity check passes
+// Reveal bid, called only after validity checks pass
 export const revealBid = async(domainName, amount, salt) => {
   if (!await bidContract.methods.checkValidCommit(domainName, ethereum.selectedAddress, web3.utils.toWei(amount, 'ether'), salt).call()) {
     alert("Cannot reveal bid. Please check that the bid commit details are valid.")

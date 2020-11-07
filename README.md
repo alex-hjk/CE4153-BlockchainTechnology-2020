@@ -32,6 +32,7 @@ For Truffle deployment:
 
 ## User Interface
 The user interface is a simple [React](https://reactjs.org/) App.
+![UIScreenshot](/images/frontendScr.png?raw=true "Screenshot")
 
 ## Installation
 
@@ -90,7 +91,10 @@ The user interface is a simple [React](https://reactjs.org/) App.
     ```
     
 ### Testing
-Testing is done with Truffle to ensure correct contract functionality in all possible user flows. The following test cases are covered:
+Testing is done with Truffle to ensure correct contract functionality in all possible user flows.
+![TestingScreenshot](/images/testResults.png?raw=true "Test Cases")
+```
+The following test cases are covered:
 - bidder utils
     - should be able to compute generated hash
     - should be able to return block number
@@ -131,3 +135,4 @@ Testing is done with Truffle to ensure correct contract functionality in all pos
     - should be not able to claim domain if post-gas value sent is less than highest bid
     - should not be able to claim domain during commit phase
     - should not be able to claim domain during reveal phase
+```
