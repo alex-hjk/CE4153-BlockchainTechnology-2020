@@ -7,9 +7,9 @@ Users may bid for a unregistered or expired domain name in the registrar through
 
 During the *commit* phase, any bidders may add a new bid for a domain. Each address may only hold one bid's hash commit for each domain, and addding a new bid will simply update and replace the existing bid. During this phase, bidders will not know the value of bids from other bidders as only the hash commit of the bid is stored.
 
-During the *reveal* phase, new bids are no longer allowed, and bidders who have bidded during the commit phase may choose to reveal their bids through the hash commit of their bid value and salt. During this phase, information regarding the highest bidder and bid value will be publicly visible. Whenever a higher bid value is revealed, the bid info for that domain is updated. In the case of a tie in bid value, the bidder who made the commit in an earlier block number will break the tie and win the auction.
+During the *reveal* phase, new bids are no longer allowed, and bidders who have bidded during the commit phase may choose to reveal their bids through the hash commit of their bid value and salt. During this phase, information regarding the highest bidder and bid value will be publicly visible. Whenever a higher bid value is revealed, the bid info for that domain will be updated. In the case of a tie in bid value, the bidder who made the commit in an earlier block number will break the tie and win the auction.
 
-During the *claim* phase, only the address of the highest bidder will be able to claim the domain and register that domain to a target address. During this phase, the highest bidder will also have to send ether value of value greater than or equal to his bid value. Any excess ether is refunded back. In the case where the domain is unclaimed, the bid will expire and the domain will remain unregistered, open for a new round of bidding.
+During the *claim* phase, only the address of the highest bidder will be able to claim the domain and register that domain to a target address. During this phase, the highest bidder will also have to send ether of value greater than or equal to his bid value. Any excess ether is refunded back. In the case where the domain is unclaimed, the bid will expire and the domain will remain unregistered, open for a new round of bidding.
 
 ## Smart Contracts
 The registrar is powered by two smart contracts written in Solidity.
@@ -18,14 +18,14 @@ The registrar is powered by two smart contracts written in Solidity.
     1. Mapping `domains` maps the domain name string to the `Domain` struct.
     2. `Domain` struct stores the domain owner and expiry information.
     3. Function `addDomain` handles the registration of a new domain into the registrar, and may only be called by the bidder through the modifier `onlyBidder`.
-    4. Function `removeDomain` handles the deregistration of an existing domain from the registrar, and may only be caleld by the owner of the contract of the bidder.
+    4. Function `removeDomain` handles the deregistration of an existing domain from the registrar, and may only be called by the owner or the contract of the bidder.
     5. Events `AddDomain` and `RemoveDomain` are defined and emitted whenever a domain is added or removed so that the frontend can update the state of the registered domains.
 - Bidder.sol
     - Domain name bidding and claiming functionality
     1. Mapping `bids` maps the domain name string to the `Bidding` struct.
     2. `Bidding` struct stores another mapping `commits` that maps the sender address to the `Commit` struct. `Bidding` also contains additional bid information for each domain.
     3. `Commit` struct stores the commit hash as well as the block number of the commit.
-For Ownership and Access control:
+For Ownership and Access control (from OpenZeppelin):
 - Ownable.sol
 For Truffle deployment:
 - Migrations.sol
@@ -92,9 +92,11 @@ The user interface is a simple [React](https://reactjs.org/) App.
     
 ### Testing
 Testing is done with Truffle to ensure correct contract functionality in all possible user flows.
+
 ![TestingScreenshot](/images/testResults.png?raw=true "Test Cases")
-```
+
 The following test cases are covered:
+```
 - bidder utils
     - should be able to compute generated hash
     - should be able to return block number
