@@ -107,11 +107,15 @@ The user interface is a simple [React](https://reactjs.org/) App.
     - MetaMask should automatically connect to the application site.
 
 ### Re-deployment
-- Re-migrate contracts
+- Re-deploy contracts
     ```
     cd decentralised-domain-registrar   // enter main project folder
-    truffle migrate --reset             // re-migrate contracts using Truffle
+    truffle migrate --reset             // re-deploy contracts using Truffle
     ```
+- Update front-end addresses
+    - Obtain the updated Registrar and Bidder addresses from the *Contracts* tab in Ganache.
+    - Copy and paste each address into `RegistrarAddress` and `BidderAddress` respectively in `webapp/domainRegistrar.js`, replacing previous values.
+
 - Restart application front-end
     ```
     cd webapp   // enter front-end folder
